@@ -13,3 +13,9 @@ class Module(Base):
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
     
+    module_permissions = relationship(
+        "ModulePermission",
+        back_populates="module",
+        cascade="all, delete, delete-orphan",
+    )
+    

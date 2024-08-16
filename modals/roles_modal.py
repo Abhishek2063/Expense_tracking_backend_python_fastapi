@@ -17,3 +17,8 @@ class Role(Base):
         back_populates="role",
         cascade="all, delete, delete-orphan",
     )
+    module_permissions = relationship(
+        "ModulePermission",
+        back_populates="role",
+        cascade="all, delete, delete-orphan",
+    )

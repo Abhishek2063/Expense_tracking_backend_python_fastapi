@@ -1,21 +1,10 @@
 from modals.modules_modal import Module
 from sqlalchemy.orm import Session
+from utils.seed_common import seed_data
 
-def seed_modules(db:Session):
-    try:
-        if db.query(Module).count() == 0:
-            modules = [
-                Module(
-                    name="Dashboard",
-                    description="All report",
-                    link_name="dashboard",
-                ),
-            ]
-            db.add_all(modules)
-            db.commit()
-            print("Modules seeded successfully")
-        else:
-            print("Modules already exist, skipping seed.")
-    except Exception as e:
-        db.rollback()
-        print(f"An error occurred while seeding modules: {e}")
+# Seeding Modules
+def seed_modules(db: Session):
+    modules = [
+        {"name": "Dashboard", "description": "All reports", "link_name": "dashboard"},
+    ]
+    seed_data(db, Module, modules)
