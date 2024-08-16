@@ -1,8 +1,8 @@
 from fastapi import FastAPI
-from config.database import get_db
+from seedings.seed import seed_data
 
+seed_data()
 app = FastAPI()
-get_db()
 
 @app.get("/")
 def read_root():
