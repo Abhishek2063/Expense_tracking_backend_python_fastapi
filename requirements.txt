@@ -6,4 +6,5 @@ python-dotenv
 databases[postgresql] 
 asyncpg
 psycopg2-binary
+bcrypt==4.0.1
 passlib[bcrypt]
