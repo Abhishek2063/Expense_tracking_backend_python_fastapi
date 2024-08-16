@@ -6,6 +6,7 @@ from seedings.modules_permission_seed import seed_module_permissions
 from seedings.category_seed import seed_categories
 from modals.expenses_modal import Expense
 from modals.reports_modal import Report
+from modals.settings_modal import ReminderSetting
 
 def seed_data():
     # Create all tables

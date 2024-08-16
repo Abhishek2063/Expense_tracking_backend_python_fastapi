@@ -29,4 +29,9 @@ class User(Base):
         back_populates="user",
         cascade="all, delete, delete-orphan",
     )
+    reminder_settings = relationship(
+        "ReminderSetting",
+        back_populates="user",
+        cascade="all, delete, delete-orphan",
+    )
     
