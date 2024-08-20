@@ -2,6 +2,7 @@ from passlib.context import CryptContext
 from sqlalchemy.orm import Session
 from modals.roles_modal import Role
 from modals.modules_modal import Module
+from modals.users_modal import User
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 def verify_password(plain_password:str, hashed_password:str):
@@ -20,3 +21,7 @@ def get_roles(db: Session):
 # Function to get all modules with their IDs
 def get_modules(db: Session):
     return {module.name: module.id for module in db.query(Module).all()}
+
+# Functions to get user by email
+def get_user_by_email(db: Session, email: str):
+    return db.query(User).filter(User.email == email).first()
