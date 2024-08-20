@@ -1,4 +1,27 @@
 from pydantic import BaseModel
+from pydantic import BaseModel, constr, validator
+from typing import Optional
+from utils.message import NAMES_CONTAINS_ONLY_LETTERS
+
+class UserRoleCreate(BaseModel):
+    name: constr(min_length=2, max_length=20)
+    description:Optional[constr(min_length=2, max_length=40)] = None
+    
+    @validator("name")
+    def name_must_contain_only_letters(cls, v):
+        if not v.replace(" ", "").isalpha():
+            raise ValueError(NAMES_CONTAINS_ONLY_LETTERS)
+        return v.title()
+
+class UserRoleUpdate(BaseModel):
+    name: Optional[constr(min_length=2, max_length=20)] = None
+    description:Optional[constr(min_length=2, max_length=20)] = None
+    
+    @validator("name")
+    def name_must_contain_only_letters(cls, v):
+        if not v.replace(" ", "").isalpha():
+            raise ValueError(NAMES_CONTAINS_ONLY_LETTERS)
+        return v.title()
 
 class UserRoleResponse(BaseModel):
     """
@@ -11,7 +34,7 @@ class UserRoleResponse(BaseModel):
     """
     id: int
     name: str
-    description: str
+    description: Optional[str] = None
 
     class Config:
         """

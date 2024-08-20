@@ -27,3 +27,12 @@ PASSWORD_INCORRECT = "The provided password is incorrect."
 PASSWORD_UPDATED_SUCCESSFULLY = "Password has been updated successfully."
 
 USER_DELETED_SUCCESSFULLY = "User has been deleted successfully."
+
+USER_ROLE_NAME_ALREADY_TAKEN = "The specified user role name already exists."
+USER_ROLE_CREATED_SUCCESSFULLY = "User role has been created successfully."
+USER_ROLES_LIST_GET_SUCCESSFULLY = "User roles list retrieved successfully."
+USER_ROLE_NOT_EXIST = "The specified user role does not exist."
+USER_ROLE_FOUND_SUCCESSFULL = "User role has been located successfully."
+USER_ROLE_UPDATE_SUCCESSFULLY = "User role has been updated successfully."
+USER_ROLE_IS_CONNECTED_WITH_USER_TABLE = "This user role is associated with existing users."
+USER_ROLE_DELETE_SUCCESSFULLY = "User role has been deleted successfully."

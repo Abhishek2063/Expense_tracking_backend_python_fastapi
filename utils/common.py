@@ -107,3 +107,6 @@ def get_user_by_id(db: Session, user_id: int) -> User:
         user: The user object if found, None otherwise.
     """
     return db.query(User).filter(User.id == user_id).first()
+
+def check_user_role_contained_in_user_table(db: Session, role_id: int):
+    return db.query(User).filter(User.role_id == role_id).first()

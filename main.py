@@ -7,6 +7,8 @@ from utils.message import VALIDATION_ERROR, WELCOME_MESSAGE
 from utils.response import create_response
 from routes.user_routes import router as user_router
 from routes.auth_routes import router as auth_router
+from routes.role_routes import router as role_router
+
 from middlewares.custom_exception_handler import custom_http_exception_handler
 
 # Seed initial data into the database (if applicable)
@@ -55,6 +57,9 @@ app.include_router(user_router)
 
 # Include authentication-related routes from the `auth_routes` module
 app.include_router(auth_router)
+
+# Include role-related routes from the `role_routes` module
+app.include_router(role_router)
 
 
 # Define a root endpoint that returns a welcome message
