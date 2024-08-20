@@ -7,3 +7,6 @@ USER_CREATED_SUCCESSFULLY = "User created successfully"
 USER_CREATION_FAILED = "An error occurred while creating the user"
 
 VALIDATION_ERROR = "Validation Error"
+INVALID_CREDENTIALS = "Invalid Credentials"
+LOGIN_SUCCESSFUL = "Login Successful"
+INTERNAL_SERVER_ERROR = "An internal server error occurred"

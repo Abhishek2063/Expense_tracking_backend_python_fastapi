@@ -1,11 +1,14 @@
-from fastapi import FastAPI, status,Request
+from fastapi import FastAPI, status, Request
 from seedings.seed import seed_data
 from utils.message import VALIDATION_ERROR, WELCOME_MESSAGE
 from utils.response import create_response
 from routes.user_routes import router as user_router
-seed_data()
+from routes.auth_routes import router as auth_router
+
 from fastapi.responses import JSONResponse
 from fastapi.exceptions import RequestValidationError
+
+seed_data()
 
 app = FastAPI()
 
@@ -27,8 +30,10 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
             "errors": formatted_errors,
         },
     )
-    
+
+
 app.include_router(user_router)
+app.include_router(auth_router)
 
 
 @app.get("/")

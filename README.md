@@ -21,6 +21,7 @@ This project is an expense tracking application built with FastAPI for the backe
 ## Features
 
 - User creation
+- User Authentication
 
 ## Installation
 
@@ -93,6 +94,19 @@ Request Body:
 {
     "first_name": "John",
     "last_name": "Doe",
+    "email": "john.doe@example.com",
+    "password": "password123!"
+}
+```
+
+### User Authentication
+
+POST /api/auth/login
+
+Request Body:
+
+```bash
+{
     "email": "john.doe@example.com",
     "password": "password123!"
 }
