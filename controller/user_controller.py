@@ -1,17 +1,28 @@
 from fastapi import APIRouter, Depends, HTTPException, status, Request
 from sqlalchemy.orm import Session
 from utils.routes_list import (
+    DELETE_USER_API,
     GET_ALL_USERS_LIST_WITH_PAGINATION,
     GET_USER_API,
+    UPDATE_USER_DETAILS,
+    UPDATE_USER_PASSWORD_DETAILS,
     USER_CREATE_API,
 )
 from schemas.response_schema import API_Response
-from schemas.user_schema import User_Create_Schema, UserResponse
+from schemas.user_schema import (
+    User_Create_Schema,
+    User_Update_Schema,
+    UserResponse,
+    UserUpdatePassword,
+)
 from config.database import get_db
 from services.user_services import (
     create_user_services,
+    delete_user_by_id_services,
     get_all_users_services,
     get_user_by_id_services,
+    update_user_password_services,
+    update_user_services,
 )
 from utils.response import create_response
 from utils.message import USER_CREATION_FAILED
@@ -192,4 +203,151 @@ def get_user_by_id_controller(
             status_code=500,
             success=False,
             message=USER_CREATION_FAILED,  # Consider renaming this to a more appropriate message
+        )
+
+@router.put(f"{UPDATE_USER_DETAILS}" + "{user_id}", response_model=API_Response)
+def update_user_details_controller(
+    user_id: int,
+    user_update: User_Update_Schema,
+    db: Session = Depends(get_db),
+    user: User = Depends(authenticate_user),
+):
+    """
+    Controller to update user details.
+
+    Parameters:
+    - user_id: ID of the user to be updated.
+    - user_update: Schema object containing user update details.
+    - db: Database session dependency.
+    - user: Authenticated user object.
+
+    Returns:
+    - API response with the status of the update operation.
+    """
+    if not isinstance(user, User):  # Check if the authenticated user is valid
+        return create_response(
+            status_code=user["status_code"],
+            success=user["success"],
+            message=user["message"],
+        )
+
+    try:
+        result = update_user_services(db, user_id, user_update)
+        if not result["success"]:
+            return create_response(
+                result["status_code"],
+                result["success"],
+                result["message"],
+            )
+
+        user_response = UserResponse.from_orm(
+            result["data"]
+        )  # Transform result data into response model
+        return create_response(
+            status_code=result["status_code"],
+            success=result["success"],
+            message=result["message"],
+            data=user_response,
+        )
+    except Exception as e:
+        # Log the exception (consider adding a logger)
+        return create_response(
+            status_code=500,
+            success=False,
+            message=USER_CREATION_FAILED,
+        )
+
+
+@router.put(
+    f"{UPDATE_USER_PASSWORD_DETAILS}" + "{user_id}", response_model=API_Response
+)
+def update_user_password_details_controller(
+    user_id: int,
+    user_update_password: UserUpdatePassword,
+    db: Session = Depends(get_db),
+    user: User = Depends(authenticate_user),
+):
+    """
+    Controller to update user password.
+
+    Parameters:
+    - user_id: ID of the user whose password is to be updated.
+    - user_update_password: Schema object containing current and new password.
+    - db: Database session dependency.
+    - user: Authenticated user object.
+
+    Returns:
+    - API response with the status of the password update operation.
+    """
+    if not isinstance(user, User):  # Check if the authenticated user is valid
+        return create_response(
+            status_code=user["status_code"],
+            success=user["success"],
+            message=user["message"],
+        )
+
+    try:
+        result = update_user_password_services(db, user_id, user_update_password)
+        if not result["success"]:
+            return create_response(
+                result["status_code"],
+                result["success"],
+                result["message"],
+            )
+
+        user_response = UserResponse.from_orm(
+            result["data"]
+        )  # Transform result data into response model
+        return create_response(
+            status_code=result["status_code"],
+            success=result["success"],
+            message=result["message"],
+            data=user_response,
+        )
+    except Exception as e:
+        # Log the exception (consider adding a logger)
+        return create_response(
+            status_code=500,
+            success=False,
+            message=USER_CREATION_FAILED,
+        )
+
+
+@router.delete(f"{DELETE_USER_API}" + "{user_id}", response_model=API_Response)
+def delete_user_by_id_controller(
+    user_id: int,
+    db: Session = Depends(get_db),
+    user: User = Depends(authenticate_user),  # Ensure user is authenticated
+):
+    """
+    Controller to delete a user by ID.
+
+    Parameters:
+    - user_id: ID of the user to be deleted.
+    - db: Database session dependency.
+    - user: Authenticated user object.
+
+    Returns:
+    - API response with the status of the deletion operation.
+    """
+    if not isinstance(user, User):  # Check if the authenticated user is valid
+        return create_response(
+            status_code=user["status_code"],
+            success=user["success"],
+            message=user["message"],
+        )
+
+    try:
+        result = delete_user_by_id_services(db, user_id)
+        return create_response(
+            result["status_code"],
+            result["success"],
+            result["message"],
+        )
+    except Exception as e:
+        # Log the exception (consider adding a logger)
+        return create_response(
+            status_code=500,
+            success=False,
+            message=USER_CREATION_FAILED,
         )

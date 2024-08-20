@@ -1,20 +1,31 @@
 from sqlalchemy.orm import Session
-from schemas.user_schema import User_Create_Schema, UserResponse
+from schemas.user_schema import (
+    User_Create_Schema,
+    User_Update_Schema,
+    UserResponse,
+    UserUpdatePassword,
+)
 from utils.common import (
+    get_role_by_id,
     get_role_by_name,
     get_user_by_email,
-    hash_password,
     get_user_by_id,
+    hash_password,
+    verify_password,
 )
 from fastapi import HTTPException, status
 from utils.message import (
     INVALID_SORT_FIELD,
     INVALID_SORT_ORDER,
+    PASSWORD_INCORRECT,
+    PASSWORD_UPDATED_SUCCESSFULLY,
     USER_CREATED_SUCCESSFULLY,
     USER_DATA_FOUND,
+    USER_DELETED_SUCCESSFULLY,
     USER_EMAIL_ALREADY_REGISTERED,
     USER_INVALID_ROLE_ID,
     USER_NOT_EXIST,
+    USER_UPDATED_SUCCESSFULLY,
     USERS_RETRIEVED_SUCCESSFULLY,
 )
 from modals.users_modal import User
@@ -192,4 +203,120 @@ def get_user_by_id_services(db: Session, user_id: int):
         "status_code": 200,
         "message": USER_DATA_FOUND,
         "data": user,
+    }
+
+
+# Service to update user details
+def update_user_services(db: Session, user_id: int, user_update: User_Update_Schema):
+    # Fetch the user by ID
+    db_user = get_user_by_id(db, user_id)
+
+    # If the user does not exist, return an error response
+    if not db_user:
+        return {
+            "status_code": status.HTTP_400_BAD_REQUEST,
+            "success": False,
+            "message": USER_NOT_EXIST,
+        }
+
+    # Validate and update the role if a new role ID is provided
+    if user_update.role_id:
+        role = get_role_by_id(db, user_update.role_id)
+
+        # If the role does not exist, return an error response
+        if not role:
+            return {
+                "success": False,
+                "status_code": status.HTTP_400_BAD_REQUEST,
+                "message": USER_INVALID_ROLE_ID,
+            }
+
+        # Update the user's role
+        db_user.role_id = user_update.role_id
+
+    # Update the user's first name if provided
+    if user_update.first_name:
+        db_user.first_name = user_update.first_name
+
+    # Update the user's last name if provided
+    if user_update.last_name:
+        db_user.last_name = user_update.last_name
+
+    # Commit the changes to the database and refresh the user object
+    db.commit()
+    db.refresh(db_user)
+
+    # Return a success response with the updated user data
+    return {
+        "success": True,
+        "status_code": status.HTTP_200_OK,
+        "message": USER_UPDATED_SUCCESSFULLY,
+        "data": db_user,
+    }
+
+
+# Service to update user password
+def update_user_password_services(
+    db: Session, user_id: int, user_update_password: UserUpdatePassword
+):
+    # Fetch the user by ID
+    db_user = get_user_by_id(db, user_id)
+
+    # If the user does not exist, return an error response
+    if not db_user:
+        return {
+            "status_code": status.HTTP_400_BAD_REQUEST,
+            "success": False,
+            "message": USER_NOT_EXIST,
+        }
+
+    # Verify the current password
+    if not verify_password(
+        user_update_password.current_password, db_user.password_hash
+    ):
+        return {
+            "success": False,
+            "status_code": status.HTTP_400_BAD_REQUEST,
+            "message": PASSWORD_INCORRECT,
+        }
+
+    # Hash and update the new password
+    hashed_password = hash_password(user_update_password.new_password)
+    db_user.password = hashed_password
+
+    # Commit the changes to the database and refresh the user object
+    db.commit()
+    db.refresh(db_user)
+
+    # Return a success response with the updated user data
+    return {
+        "success": True,
+        "status_code": status.HTTP_200_OK,
+        "message": PASSWORD_UPDATED_SUCCESSFULLY,
+        "data": db_user,
+    }
+
+
+# Service to delete a user by ID
+def delete_user_by_id_services(db: Session, user_id: int):
+    # Fetch the user by ID
+    user = get_user_by_id(db, user_id)
+
+    # If the user does not exist, return an error response
+    if not user:
+        return {
+            "status_code": status.HTTP_400_BAD_REQUEST,
+            "success": False,
+            "message": USER_NOT_EXIST,
+        }
+
+    # Delete the user from the database
+    db.delete(user)
+    db.commit()
+
+    # Return a success response confirming the deletion
+    return {
+        "success": True,
+        "status_code": status.HTTP_200_OK,
+        "message": USER_DELETED_SUCCESSFULLY,
     }

@@ -18,13 +18,32 @@ This project is a backend service for a Expense Tracking Application, built usin
 
 This project is an expense tracking application built with FastAPI for the backend and React for the frontend. It allows users to manage and track their expenses, categorize them, and generate reports. The application uses PostgreSQL as the database and SQLAlchemy as the ORM.
 
+
 ## Features
 
-- User creation
-- User Authentication
-- Get all users with pagination and sorting
-- Added the token authenication to proctect the private routes.
-- Procted the API routes on the behalf of the user roles.
+- **User Creation**: 
+  - Ability to create new user accounts with essential details.
+
+- **User Authentication**: 
+  - Secure login mechanism with token-based authentication to manage user sessions.
+
+- **User Management**:
+  - **Retrieve Users**: 
+    - Fetch a list of users with support for pagination and sorting options.
+  - **Update User Details**: 
+    - Modify user profile information, including first name, last name, and role.
+  - **Update User Password**: 
+    - Change user password with validation to ensure security.
+  - **Delete User**: 
+    - Remove a user account from the system.
+
+- **Token-Based Authentication**: 
+  - Implementation of token-based authentication to safeguard private routes.
+
+- **Role-Based Access Control**: 
+  - Protection of API routes based on user roles to ensure appropriate access levels.
+
+
 
 ## Installation
 
@@ -124,6 +143,51 @@ Query Parameters: order, sort_by, skip, limit
 
 Example: http://127.0.0.1:8000/api/user/get_all_users/?order=asc&sort_by=email&skip=0&limit=10
 ```
+
+
+### Get User by ID:
+
+GET /api/users/{user_id}
+
+```bash
+Example: http://127.0.0.1:8000/api/user/1
+```
+
+### User Update By ID
+
+PUT /api/users/{user_id}
+
+Request Body:
+
+```bash
+{
+    "first_name": "John",
+    "last_name": "Doe",
+    "role_id": 1
+}
+```
+
+### User Update Password
+
+PUT /api/users/password_update/{user_id}
+
+Request Body:
+
+```bash
+{
+    "current_password" : "Test#1234",
+    "new_password" : "Test@1234"
+}
+```
+
+### Delete User by ID:
+
+DELETE /api/users/{user_id}
+
+```bash
+Example: http://127.0.0.1:8000/api/user/1
+```
+
 
 
 ## Dependencies

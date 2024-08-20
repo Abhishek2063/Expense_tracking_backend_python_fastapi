@@ -21,3 +21,9 @@ ACCESS_FORBIDDEN = "Access denied: You do not have the necessary permissions."
 
 USER_NOT_EXIST = "User does not exist."
 USER_DATA_FOUND = "User details found."
+USER_UPDATED_SUCCESSFULLY = "User has been updated successfully."
+
+PASSWORD_INCORRECT = "The provided password is incorrect."
+PASSWORD_UPDATED_SUCCESSFULLY = "Password has been updated successfully."
+
+USER_DELETED_SUCCESSFULLY = "User has been deleted successfully."
