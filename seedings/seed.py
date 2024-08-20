@@ -9,18 +9,32 @@ from modals.reports_modal import Report
 from modals.settings_modal import ReminderSetting
 
 def seed_data():
-    # Create all tables
+    """
+    Seeds the database with initial data by creating tables and inserting predefined records.
+
+    - Creates all tables defined in the Base metadata.
+    - Seeds roles, users, modules, module permissions, and categories into the database.
+    """
+    # Create all tables defined in the Base metadata
     Base.metadata.create_all(bind=engine)
 
+    # Create a new database session
     db = SessionLocal()
 
     try:
+        # Seed the database with roles
         seed_roles(db)
+        # Seed the database with users
         seed_users(db)
+        # Seed the database with modules
         seed_modules(db)
+        # Seed the database with module permissions
         seed_module_permissions(db)
+        # Seed the database with categories
         seed_categories(db)
     except Exception as e:
+        # Print any unexpected errors that occur during seeding
         print(f"An unexpected error occurred: {e}")
     finally:
+        # Ensure the database session is closed
         db.close()
