@@ -20,7 +20,7 @@ This project is an expense tracking application built with FastAPI for the backe
 
 ## Features
 
-
+- User creation
 
 ## Installation
 
@@ -85,7 +85,7 @@ Here are the available API endpoints:
 
 ### Create User
 
-POST /api/user/create/
+POST /api/user/
 
 Request Body:
 
@@ -94,8 +94,7 @@ Request Body:
     "first_name": "John",
     "last_name": "Doe",
     "email": "john.doe@example.com",
-    "password": "password123!",
-    "role_id": 1
+    "password": "password123!"
 }
 ```
 
@@ -112,6 +111,9 @@ python-dotenv
 databases[postgresql] 
 asyncpg
 psycopg2-binary
+bcrypt==4.0.1
+passlib[bcrypt]
+pydantic[email]
 
 ```
 
