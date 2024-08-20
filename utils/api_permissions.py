@@ -10,8 +10,8 @@ class UserRoles(Enum):
 
 # Combine prefixes and routes
 API_ROUTES = {
-    f"{USER_API_PREFIX}{USER_CREATE_API}": [UserRoles.SUPER_ADMIN, UserRoles.ADMIN, UserRoles.USER],
-    f"{USER_API_PREFIX}{GET_ALL_USERS_LIST_WITH_PAGINATION}": [UserRoles.SUPER_ADMIN, UserRoles.ADMIN, UserRoles.USER],
+    f"{USER_API_PREFIX}{USER_CREATE_API}*": [UserRoles.SUPER_ADMIN, UserRoles.ADMIN, UserRoles.USER],
+    f"{USER_API_PREFIX}{GET_ALL_USERS_LIST_WITH_PAGINATION}*": [UserRoles.SUPER_ADMIN, UserRoles.ADMIN, UserRoles.USER],
     f"{AUTH_API_PREFIX}{LOGIN_API}": [UserRoles.SUPER_ADMIN, UserRoles.ADMIN, UserRoles.USER],
 }
 

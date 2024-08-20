@@ -94,3 +94,16 @@ def get_role_by_id(db: Session, role_id: int) -> Role:
         Role: The Role object if found, None otherwise.
     """
     return db.query(Role).filter(Role.id == role_id).first()
+
+def get_user_by_id(db: Session, user_id: int) -> User:
+    """
+    Retrieve a user from the database by its id.
+    
+    Args:
+        db (Session): The database session.
+        user_id (int): The id of the user to retrieve.
+        
+    Returns:
+        user: The user object if found, None otherwise.
+    """
+    return db.query(User).filter(User.id == user_id).first()

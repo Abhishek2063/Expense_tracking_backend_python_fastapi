@@ -1,13 +1,20 @@
 from sqlalchemy.orm import Session
 from schemas.user_schema import User_Create_Schema, UserResponse
-from utils.common import get_role_by_name, get_user_by_email, hash_password
+from utils.common import (
+    get_role_by_name,
+    get_user_by_email,
+    hash_password,
+    get_user_by_id,
+)
 from fastapi import HTTPException, status
 from utils.message import (
     INVALID_SORT_FIELD,
     INVALID_SORT_ORDER,
     USER_CREATED_SUCCESSFULLY,
+    USER_DATA_FOUND,
     USER_EMAIL_ALREADY_REGISTERED,
     USER_INVALID_ROLE_ID,
+    USER_NOT_EXIST,
     USERS_RETRIEVED_SUCCESSFULLY,
 )
 from modals.users_modal import User
@@ -81,15 +88,32 @@ def get_all_users_services(
     skip: int = 0,
     limit: int = 10,
 ):
+    """
+    Retrieve all users from the database with pagination and sorting options.
+
+    Parameters:
+        db (Session): The SQLAlchemy database session.
+        sort_by (str): The field by which to sort the users. Default is 'created_at'.
+        order (str): The order of sorting, either 'asc' (ascending) or 'desc' (descending). Default is 'asc'.
+        skip (int): The number of records to skip for pagination. Default is 0.
+        limit (int): The maximum number of records to return. Default is 10.
+
+    Returns:
+        dict: A dictionary containing the status of the request, a success flag,
+              a message, and the data (user list with pagination details).
+    """
     valid_sort_by = ["email", "first_name", "last_name", "role", "created_at"]
     valid_order = ["asc", "desc"]
 
+    # Validate sorting field
     if sort_by not in valid_sort_by:
         return {
             "status_code": status.HTTP_400_BAD_REQUEST,
             "success": False,
             "message": INVALID_SORT_FIELD,
         }
+
+    # Validate sorting order
     if order not in valid_order:
         return {
             "status_code": status.HTTP_400_BAD_REQUEST,
@@ -97,6 +121,7 @@ def get_all_users_services(
             "message": INVALID_SORT_ORDER,
         }
 
+    # Map sorting fields to database columns
     sort_column = {
         "created_at": User.created_at,
         "email": User.email,
@@ -105,19 +130,23 @@ def get_all_users_services(
         "role": Role.name,
     }.get(sort_by, User.created_at)
 
+    # Determine sorting method
     order_method = asc if order == "asc" else desc
 
+    # Construct the query with sorting, pagination, and necessary joins
     query = (
         db.query(User)
         .join(Role, User.role_id == Role.id)
         .order_by(order_method(sort_column))
     )
 
+    # Calculate total records and apply pagination
     total = query.count()
     users = query.offset(skip).limit(limit).all()
     total_pages = (total + limit - 1) // limit
     current_page = skip // limit + 1
 
+    # Return response with pagination details and user data
     return {
         "success": True,
         "status_code": 200,
@@ -132,4 +161,35 @@ def get_all_users_services(
             "current_page": current_page,
             "users": [UserResponse.from_orm(user) for user in users],
         },
+    }
+
+
+def get_user_by_id_services(db: Session, user_id: int):
+    """
+    Retrieve specific user details by user ID.
+
+    Parameters:
+        db (Session): The SQLAlchemy database session.
+        user_id (int): The ID of the user to retrieve.
+
+    Returns:
+        dict: A dictionary containing the status of the request, a success flag,
+              a message, and the user data if found.
+    """
+    # Fetch the user from the database by ID
+    user = get_user_by_id(db, user_id)
+    if not user:
+        # Return an error if the user does not exist
+        return {
+            "status_code": status.HTTP_400_BAD_REQUEST,
+            "success": False,
+            "message": USER_NOT_EXIST,
+        }
+
+    # Return the user data if found
+    return {
+        "success": True,
+        "status_code": 200,
+        "message": USER_DATA_FOUND,
+        "data": user,
     }
