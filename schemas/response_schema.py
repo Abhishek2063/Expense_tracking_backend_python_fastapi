@@ -15,3 +15,13 @@ class API_Response(BaseModel):
     success: bool
     message: str
     data: Optional[Any] = None
+
+    class Config:
+        """
+        Configuration for the UserRoleResponse schema.
+
+        Attributes:
+        - orm_mode: Allows Pydantic to work with ORM models by treating them as dictionaries.
+        """
+        orm_mode = True
+        from_attributes=True

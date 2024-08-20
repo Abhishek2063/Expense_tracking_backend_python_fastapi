@@ -1,13 +1,19 @@
 from sqlalchemy.orm import Session
-from schemas.user_schema import User_Create_Schema
+from schemas.user_schema import User_Create_Schema, UserResponse
 from utils.common import get_role_by_name, get_user_by_email, hash_password
 from fastapi import HTTPException, status
 from utils.message import (
+    INVALID_SORT_FIELD,
+    INVALID_SORT_ORDER,
     USER_CREATED_SUCCESSFULLY,
     USER_EMAIL_ALREADY_REGISTERED,
     USER_INVALID_ROLE_ID,
+    USERS_RETRIEVED_SUCCESSFULLY,
 )
 from modals.users_modal import User
+from modals.roles_modal import Role
+from sqlalchemy import asc, desc
+
 
 def create_user_services(db: Session, user_create: User_Create_Schema):
     """
@@ -65,4 +71,65 @@ def create_user_services(db: Session, user_create: User_Create_Schema):
         "status_code": status.HTTP_201_CREATED,
         "message": USER_CREATED_SUCCESSFULLY,
         "data": db_user,
+    }
+
+
+def get_all_users_services(
+    db: Session,
+    sort_by: str = "created_at",
+    order: str = "asc",
+    skip: int = 0,
+    limit: int = 10,
+):
+    valid_sort_by = ["email", "first_name", "last_name", "role", "created_at"]
+    valid_order = ["asc", "desc"]
+
+    if sort_by not in valid_sort_by:
+        return {
+            "status_code": status.HTTP_400_BAD_REQUEST,
+            "success": False,
+            "message": INVALID_SORT_FIELD,
+        }
+    if order not in valid_order:
+        return {
+            "status_code": status.HTTP_400_BAD_REQUEST,
+            "success": False,
+            "message": INVALID_SORT_ORDER,
+        }
+
+    sort_column = {
+        "created_at": User.created_at,
+        "email": User.email,
+        "first_name": User.first_name,
+        "last_name": User.last_name,
+        "role": Role.name,
+    }.get(sort_by, User.created_at)
+
+    order_method = asc if order == "asc" else desc
+
+    query = (
+        db.query(User)
+        .join(Role, User.role_id == Role.id)
+        .order_by(order_method(sort_column))
+    )
+
+    total = query.count()
+    users = query.offset(skip).limit(limit).all()
+    total_pages = (total + limit - 1) // limit
+    current_page = skip // limit + 1
+
+    return {
+        "success": True,
+        "status_code": 200,
+        "message": USERS_RETRIEVED_SUCCESSFULLY,
+        "data": {
+            "total": total,
+            "limit": limit,
+            "skip": skip,
+            "sort_by": sort_by,
+            "sort_order": order,
+            "total_pages": total_pages,
+            "current_page": current_page,
+            "users": [UserResponse.from_orm(user) for user in users],
+        },
     }

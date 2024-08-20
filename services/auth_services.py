@@ -5,6 +5,7 @@ from utils.common import get_user_by_email, verify_password
 from utils.message import INVALID_CREDENTIALS, LOGIN_SUCCESSFUL
 from utils.token_generate import create_access_token
 
+
 def auth_user_services(db: Session, user: UserLogin):
     """
     Authenticate a user by verifying their email and password, then generate and return an access token.
@@ -22,7 +23,7 @@ def auth_user_services(db: Session, user: UserLogin):
     """
     # Retrieve the user by email
     db_user = get_user_by_email(db, email=user.email)
-    
+
     # Check if the user exists
     if not db_user:
         return {
@@ -40,8 +41,12 @@ def auth_user_services(db: Session, user: UserLogin):
         }
 
     # Prepare user data for JWT token creation
-    user_data = {"id": db_user.id, "email": db_user.email, "role_id": db_user.role_id}
-    
+    user_data = {
+        "id": str(db_user.id),  # Ensure this is a string
+        "email": db_user.email,
+        "role_id": str(db_user.role_id),  # Ensure this is a string
+    }
+
     # Generate JWT token with user data
     token = create_access_token(data={"sub": user_data})
 
@@ -54,5 +59,5 @@ def auth_user_services(db: Session, user: UserLogin):
         "success": True,
         "status_code": status.HTTP_201_CREATED,
         "message": LOGIN_SUCCESSFUL,
-        "data": db_user
+        "data": db_user,
     }

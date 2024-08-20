@@ -22,6 +22,9 @@ This project is an expense tracking application built with FastAPI for the backe
 
 - User creation
 - User Authentication
+- Get all users with pagination and sorting
+- Added the token authenication to proctect the private routes.
+- Procted the API routes on the behalf of the user roles.
 
 ## Installation
 
@@ -111,6 +114,17 @@ Request Body:
     "password": "password123!"
 }
 ```
+
+### Get All Users
+
+GET /api/users/
+
+```bash
+Query Parameters: order, sort_by, skip, limit
+
+Example: http://127.0.0.1:8000/api/user/get_all_users/?order=asc&sort_by=email&skip=0&limit=10
+```
+
 
 ## Dependencies
 

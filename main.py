@@ -1,4 +1,4 @@
-from fastapi import FastAPI, status, Request
+from fastapi import FastAPI, status, Request, HTTPException
 from fastapi.responses import JSONResponse
 from fastapi.exceptions import RequestValidationError
 
@@ -7,12 +7,16 @@ from utils.message import VALIDATION_ERROR, WELCOME_MESSAGE
 from utils.response import create_response
 from routes.user_routes import router as user_router
 from routes.auth_routes import router as auth_router
+from middlewares.custom_exception_handler import custom_http_exception_handler
 
 # Seed initial data into the database (if applicable)
 seed_data()
 
 # Initialize the FastAPI application
 app = FastAPI()
+
+# Include custom exception handler
+app.add_exception_handler(HTTPException, custom_http_exception_handler)
 
 
 # Custom exception handler for request validation errors

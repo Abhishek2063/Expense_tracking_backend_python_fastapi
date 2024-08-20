@@ -32,7 +32,7 @@ def hash_password(password: str) -> str:
     """
     return pwd_context.hash(password)
 
-def get_role_by_name(db: Session, role_name: int) -> Role:
+def get_role_by_name(db: Session, role_name: str) -> Role:
     """
     Retrieve a role from the database by its name.
     
@@ -81,3 +81,16 @@ def get_user_by_email(db: Session, email: str) -> User:
         User: The User object if found, None otherwise.
     """
     return db.query(User).filter(User.email == email).first()
+
+def get_role_by_id(db: Session, role_id: int) -> Role:
+    """
+    Retrieve a role from the database by its id.
+    
+    Args:
+        db (Session): The database session.
+        role_id (int): The id of the role to retrieve.
+        
+    Returns:
+        Role: The Role object if found, None otherwise.
+    """
+    return db.query(Role).filter(Role.id == role_id).first()
