@@ -40,6 +40,8 @@ USER_ROLE_DELETE_SUCCESSFULLY = "User role has been deleted successfully."
 CATEGORY_ALREADY_CREATED = "This category has already been created."
 CATEGORY_CREATED_SUCCESSFULY = "Category created successfully."
 CATEGORIES_LIST_GET_SUCCESSFULLY = "Category list retrieved successfully."
+CATEGORIES_NOT_EXIST = "Category does not exist."
+
 
 MODULE_ALREADY_CREATED = "This module has already been created."
 MODULE_CREATED_SUCCESSFULLY = "Module created successfully."
@@ -47,3 +49,4 @@ MODULE_NOT_EXIST = "This module not exist."
 MODULE_UPDATED_SUCCESSFULLY = "Module updated successfully."
 MODULE_LIST_GET_SUCCESSFULLY = "Module list retrieved successfully."
 MODULE_PERMISSION_UPDATED_SUCCESSFULLY = "Module permission updated successfully."
+EXPENSES_CREATED_SUCCESSFULLY = "Expense created successfully."

@@ -132,6 +132,20 @@ def check_user_role_contained_in_user_table(db: Session, role_id: int):
     return db.query(User).filter(User.role_id == role_id).first()
 
 
+def get_category_by_id(db: Session, category_id: int) -> Category:
+    """
+    Retrieve a category from the database by its id.
+
+    Args:
+        db (Session): The database session.
+        category_id (int): The id of the category to retrieve.
+
+    Returns:
+        category: The category object if found, None otherwise.
+    """
+    return db.query(Category).filter(Category.id == category_id).first()
+
+
 def get_category_by_user_id_and_category_name(
     db: Session, user_id: int, category_name: str
 ):
@@ -165,6 +179,7 @@ def get_module_by_name(db: Session, module_name: str) -> Role:
         module: The module object if found, None otherwise.
     """
     return db.query(Module).filter(Module.name == module_name).first()
+
 
 def get_module_by_id(db: Session, module_id: int) -> Role:
     """
