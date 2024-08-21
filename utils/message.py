@@ -36,3 +36,7 @@ USER_ROLE_FOUND_SUCCESSFULL = "User role has been located successfully."
 USER_ROLE_UPDATE_SUCCESSFULLY = "User role has been updated successfully."
 USER_ROLE_IS_CONNECTED_WITH_USER_TABLE = "This user role is associated with existing users."
 USER_ROLE_DELETE_SUCCESSFULLY = "User role has been deleted successfully."
+
+CATEGORY_ALREADY_CREATED = "This category has already been created."
+CATEGORY_CREATED_SUCCESSFULY = "Category created successfully."
+CATEGORIES_LIST_GET_SUCCESSFULLY = "Category list retrieved successfully."

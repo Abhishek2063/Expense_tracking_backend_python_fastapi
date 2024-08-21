@@ -1,10 +1,10 @@
 from config.database import Base, engine, SessionLocal
 from seedings.roles_seed import seed_roles
 from seedings.users_seed import seed_users
-from seedings.modules_seed import seed_modules
-from seedings.modules_permission_seed import seed_module_permissions
-from seedings.category_seed import seed_categories
+from modals.categories_modal import Category
 from modals.expenses_modal import Expense
+from modals.module_permission_modal import ModulePermission
+from modals.modules_modal import Module
 from modals.reports_modal import Report
 from modals.settings_modal import ReminderSetting
 
@@ -26,12 +26,8 @@ def seed_data():
         seed_roles(db)
         # Seed the database with users
         seed_users(db)
-        # Seed the database with modules
-        seed_modules(db)
-        # Seed the database with module permissions
-        seed_module_permissions(db)
-        # Seed the database with categories
-        seed_categories(db)
+
+
     except Exception as e:
         # Print any unexpected errors that occur during seeding
         print(f"An unexpected error occurred: {e}")

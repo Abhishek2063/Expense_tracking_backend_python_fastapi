@@ -8,6 +8,7 @@ from utils.response import create_response
 from routes.user_routes import router as user_router
 from routes.auth_routes import router as auth_router
 from routes.role_routes import router as role_router
+from routes.category_routes import router as category_router
 
 from middlewares.custom_exception_handler import custom_http_exception_handler
 
@@ -60,6 +61,9 @@ app.include_router(auth_router)
 
 # Include role-related routes from the `role_routes` module
 app.include_router(role_router)
+
+# Include category-related routes from the `category_routes` module
+app.include_router(category_router)
 
 
 # Define a root endpoint that returns a welcome message

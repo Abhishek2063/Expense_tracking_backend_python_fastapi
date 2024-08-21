@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, DateTime
+from sqlalchemy import Column, Integer, String, DateTime,ForeignKey
 from sqlalchemy.sql import func
 from sqlalchemy.orm import relationship
 from config.database import Base
@@ -9,7 +9,11 @@ class Category(Base):
 
     # Primary key for the Category table
     id = Column(Integer, primary_key=True, index=True, nullable=False)
-
+    
+   # Foreign key to the User table
+    user_id = Column(
+        Integer, ForeignKey("expanse_tracking_python.users.id", ondelete="CASCADE", onupdate="CASCADE")
+    )
     # Name of the category
     name = Column(String(20), nullable=False, unique=True)
 
@@ -28,3 +32,6 @@ class Category(Base):
         back_populates="category",
         cascade="all, delete, delete-orphan",
     )
+    
+    # Relationship to the User model
+    user = relationship("User", back_populates="categories")

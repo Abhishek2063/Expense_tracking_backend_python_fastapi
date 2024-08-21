@@ -11,10 +11,20 @@ engine = create_engine(SQLALCHEMY_DATABASE_URL, echo=True)
 
 # Create the database schema if it does not exist
 with engine.connect() as connection:
-    # Execute SQL to create schema
-    connection.execute(text("CREATE SCHEMA IF NOT EXISTS expanse_tracking_python;"))
-    # Commit the transaction
-    connection.commit()
+    try:
+        # Drop the schema if it exists (this is a destructive operation and should be used with caution)
+        connection.execute(text("DROP SCHEMA IF EXISTS expanse_tracking_python CASCADE;"))
+        # Commit the transaction
+        connection.commit()
+
+        # Create the schema if it does not exist
+        connection.execute(text("CREATE SCHEMA IF NOT EXISTS expanse_tracking_python;"))
+        # Commit the transaction
+        connection.commit()
+    except Exception as e:
+        # Rollback the transaction if any error occurs
+        connection.rollback()
+        print(f"An error occurred while creating the schema: {e}")
 
 # Configure the session factory for SQLAlchemy
 SessionLocal = sessionmaker(autoflush=False, autocommit=False, bind=engine)
