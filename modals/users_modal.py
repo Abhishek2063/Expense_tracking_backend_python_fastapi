@@ -70,3 +70,4 @@ class User(Base):
         back_populates="user",
         cascade="all, delete, delete-orphan",  # Cascade operations to associated category
     )
+

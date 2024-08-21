@@ -14,6 +14,7 @@ class ModulePermission(Base):
     module_id = Column(
         Integer, ForeignKey("expanse_tracking_python.modules.id", ondelete="CASCADE", onupdate="CASCADE")
     )
+    
 
     # Foreign key to the Role table
     role_id = Column(
@@ -31,3 +32,4 @@ class ModulePermission(Base):
 
     # Relationship to the Role model
     role = relationship("Role", back_populates="module_permissions")
+

@@ -151,3 +151,30 @@ def get_category_by_user_id_and_category_name(
         .filter(Category.user_id == user_id, Category.name == category_name)
         .first()
     )
+
+
+def get_module_by_name(db: Session, module_name: str) -> Role:
+    """
+    Retrieve a module from the database by its name.
+
+    Args:
+        db (Session): The database session.
+        module_name (str): The name of the module to retrieve.
+
+    Returns:
+        module: The module object if found, None otherwise.
+    """
+    return db.query(Module).filter(Module.name == module_name).first()
+
+def get_module_by_id(db: Session, module_id: int) -> Role:
+    """
+    Retrieve a module from the database by its id.
+
+    Args:
+        db (Session): The database session.
+        module_id (int): The id of the module to retrieve.
+
+    Returns:
+        module: The module object if found, None otherwise.
+    """
+    return db.query(Module).filter(Module.id == module_id).first()
