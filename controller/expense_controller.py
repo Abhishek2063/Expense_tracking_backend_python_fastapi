@@ -1,13 +1,16 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from middlewares.auth_middleware import authenticate_user
 from sqlalchemy.orm import Session
-from utils.routes_list import EXPENSE_CREATE_API
+from utils.routes_list import EXPENSE_CREATE_API, EXPENSE_GET_API
 from schemas.response_schema import API_Response
 from schemas.expense_schema import ExpenseCreateSchema
 from config.database import get_db
 from modals.users_modal import User
 from utils.response import create_response
-from services.expense_services import create_expenses_services
+from services.expense_services import (
+    create_expenses_services,
+    get_all_expense_by_user_id,
+)
 from utils.message import INTERNAL_SERVER_ERROR
 
 # Create an instance of APIRouter to define route operations
@@ -70,6 +73,81 @@ def create_new_expense_controller(
 
     except HTTPException as e:
         # Handle any HTTP-specific exceptions
+        return create_response(
+            status_code=e.status_code,
+            success=False,
+            message=str(e.detail),
+        )
+    except Exception as e:
+        # Handle unexpected server errors and return a generic error response
+        return create_response(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            success=False,
+            message=INTERNAL_SERVER_ERROR,
+        )
+
+
+@router.get(f"{EXPENSE_GET_API}" + "{user_id}", response_model=API_Response)
+def get_all_expense_controller(
+    user_id: int,
+    sort_by: str = "created_at",
+    order: str = "desc",
+    skip: int = 0,
+    limit: int = 10,
+    db: Session = Depends(get_db),
+    user: User = Depends(authenticate_user),
+):
+    """
+    Controller function to handle the retrieval of all expenses for a specific user.
+    This function supports sorting and pagination.
+
+    Parameters:
+    - user_id (int): The ID of the user whose expenses are to be retrieved.
+    - sort_by (str): The field by which to sort the results. Defaults to 'created_at'.
+    - order (str): The order of sorting, either 'asc' for ascending or 'desc' for descending. Defaults to 'desc'.
+    - skip (int): The number of records to skip (for pagination). Defaults to 0.
+    - limit (int): The maximum number of records to return. Defaults to 10.
+    - db (Session): The database session dependency, injected by FastAPI.
+    - user (User): The authenticated user, injected by the `authenticate_user` middleware.
+
+    Returns:
+    - API_Response: A structured response containing the success status, message, and data (if applicable).
+    """
+
+    # Verify user authentication
+    if not isinstance(user, User):
+        # If the user is not authenticated, return an error response with the authentication failure details
+        return create_response(
+            status_code=user["status_code"],
+            success=user["success"],
+            message=user["message"],
+        )
+
+    try:
+        # Retrieve all expenses for the specified user using the service layer function
+        db_expense = get_all_expense_by_user_id(
+            db, user_id=user_id, sort_by=sort_by, order=order, skip=skip, limit=limit
+        )
+
+        # Check if the expense retrieval was successful
+        if not db_expense["success"]:
+            # If not successful, return the error response from the service layer
+            return create_response(
+                db_expense["status_code"],
+                db_expense["success"],
+                db_expense["message"],
+            )
+
+        # Return a success response with the retrieved expenses data
+        return create_response(
+            status_code=db_expense["status_code"],
+            success=db_expense["success"],
+            message=db_expense["message"],
+            data=db_expense["data"],
+        )
+
+    except HTTPException as e:
+        # Handle any HTTP-specific exceptions and return the corresponding error response
         return create_response(
             status_code=e.status_code,
             success=False,

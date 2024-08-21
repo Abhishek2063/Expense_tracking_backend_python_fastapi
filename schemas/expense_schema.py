@@ -1,6 +1,7 @@
 from pydantic import BaseModel, constr, validator, Field
 from typing import Optional
 from datetime import datetime
+from schemas.category_schema import category_response_schema
 
 class ExpenseCreateSchema(BaseModel):
     """
@@ -75,6 +76,12 @@ class ExpenseUpdateSchema(BaseModel):
             raise ValueError('Amount must be greater than 0 if provided')
         return v
 
+class ExpenseResponseSchema(BaseModel):
+    category : category_response_schema
+    amount : float
+    description : Optional[str] = None
+    date : datetime
+    
     class Config:
         """
         Pydantic configuration for the schema.
