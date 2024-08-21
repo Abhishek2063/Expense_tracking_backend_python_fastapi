@@ -46,6 +46,22 @@ This project is an expense tracking application built with FastAPI for the backe
     - Fetch detailed information for a specific role using its ID.
   - **Delete Role**: 
     - Remove a role from the system by its ID.
+  
+  - **Category Management**:
+  - **Create Category**: 
+    - Define new category with specific user.
+  - **Retrieve Categories**: 
+    - Get a list of all categories with support for search filter and sorting.
+
+- **Module Management**:
+  - **Create Module**: 
+    - Define new modules with specific permissions and attributes.
+  - **Update Module**: 
+    - Modify existing modules, including updating module details.
+  - **Retrieve Modules Permission**: 
+    - Get a list of all modules with roles permission.
+  - **Update Module Permission**: 
+    - Modify existing modules permission, including updating module permission.
 
 - **Token-Based Authentication**: 
   - Implement token-based authentication to secure access to private routes and manage user sessions.
@@ -251,7 +267,63 @@ DELETE /api/role/{role_id}
 ```bash
 Example: http://127.0.0.1:8000/api/role/1
 ```
+### Create a new category for a user:
 
+POST /api/category/{user_id}
+
+```bash
+{
+  "name": "string",
+  "description": "string"
+}
+```
+
+### Retrieve a list of categories for a user, with optional filtering and sorting:
+
+GET /api/category/{user_id}
+
+```bash
+Example:  http://127.0.0.1:8000/api/category/{user_id}?filter_search={filter_search}
+```
+
+### Creation of a new module:
+
+POST /api/module
+
+```bash
+{
+  "name": "string",
+  "link_name": "string",
+  "description": "string"
+}
+```
+
+### Updating an existing module:
+
+PUT /api/module/{module_id}
+
+```bash
+{
+  "name": "string",
+  "link_name": "string",
+  "description": "string"
+}
+```
+### Fetch a list of all modules and check if a specific role has permissions for each module:
+
+GET /api/module/{role_id}
+
+```bash
+Example:  http://127.0.0.1:8000/api/module/{role_id}
+```
+
+### Update module permissions for a specific role:
+
+PUT /api/module/permission/?role_id={role_id}&module_id={module_id}
+
+```bash
+Example:  http://127.0.0.1:8000/api/module/permission/?role_id={role_id}&module_id={module_id}
+```
 
 ## Dependencies
 

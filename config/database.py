@@ -12,10 +12,10 @@ engine = create_engine(SQLALCHEMY_DATABASE_URL, echo=True)
 # Create the database schema if it does not exist
 with engine.connect() as connection:
     try:
-        # Drop the schema if it exists (this is a destructive operation and should be used with caution)
-        connection.execute(text("DROP SCHEMA IF EXISTS expanse_tracking_python CASCADE;"))
-        # Commit the transaction
-        connection.commit()
+        # # Drop the schema if it exists (this is a destructive operation and should be used with caution)
+        # connection.execute(text("DROP SCHEMA IF EXISTS expanse_tracking_python CASCADE;"))
+        # # Commit the transaction
+        # connection.commit()
 
         # Create the schema if it does not exist
         connection.execute(text("CREATE SCHEMA IF NOT EXISTS expanse_tracking_python;"))
