@@ -11,18 +11,29 @@ from routes.role_routes import router as role_router
 from routes.category_routes import router as category_router
 from routes.module_routes import router as module_router
 from routes.expense_routes import router as expense_router
-
+from fastapi.middleware.cors import CORSMiddleware
 
 from middlewares.custom_exception_handler import custom_http_exception_handler
+from config.config import settings
 
 # Seed initial data into the database (if applicable)
 seed_data()
+
+origins = ["*"]
 
 # Initialize the FastAPI application
 app = FastAPI()
 
 # Include custom exception handler
 app.add_exception_handler(HTTPException, custom_http_exception_handler)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 # Custom exception handler for request validation errors
@@ -73,6 +84,7 @@ app.include_router(module_router)
 
 # Include expense-related routes from the `expense_routes` module
 app.include_router(expense_router)
+
 
 # Define a root endpoint that returns a welcome message
 @app.get("/")
