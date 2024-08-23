@@ -40,6 +40,16 @@ class module_response_schema(BaseModel):
     link_name: str
     description: Optional[str] = None
     
+    class Config:
+        """
+        Configuration for the module_response_schema schema.
+
+        Attributes:
+        - orm_mode: Allows Pydantic to work with ORM models by treating them as dictionaries.
+        """
+        orm_mode = True
+        from_attributes=True
+    
 class module_list_response_schema(BaseModel):
     """
     Schema for representing a modules in responses.

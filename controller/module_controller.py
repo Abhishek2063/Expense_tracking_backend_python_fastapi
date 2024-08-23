@@ -236,7 +236,10 @@ def get_all_module_list_controller(
         )
 
 
-@router.put(f"{MODULE_PERMISSION_UPDATE_API}", response_model=API_Response)
+@router.put(
+    f"{MODULE_PERMISSION_UPDATE_API}" + "{role_id}/" + "{module_id}",
+    response_model=API_Response,
+)
 def update_module_permission_controller(
     role_id: int,
     module_id: int,
