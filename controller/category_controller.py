@@ -17,7 +17,7 @@ router = APIRouter()
 
 
 @router.post(f"{CATEGORY_CREATE_API}" + "{user_id}", response_model=API_Response)
-def create_new_role_controller(
+def create_new_category_controller(
     user_id: int,
     create_category: category_create_schema,
     db: Session = Depends(get_db),
@@ -82,7 +82,7 @@ def create_new_role_controller(
 
 
 @router.get(f"{GET_ALL_CATEGORY_LIST}" + "{user_id}", response_model=API_Response)
-def list_user_roles_controller(
+def get_all_category_controller(
     user_id: int,
     filter_search: str = None,
     sort_by: str = "created_at",
