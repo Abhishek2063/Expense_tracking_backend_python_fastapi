@@ -177,7 +177,7 @@ def role_details_update_services(
 
     # Check if the new role name is already taken
     if user_role_update.name:
-        existing_role = get_role_by_name(db, name=user_role_update.name)
+        existing_role = get_role_by_name(db, role_name=user_role_update.name)
         if existing_role:
             return {
                 "success": False,
