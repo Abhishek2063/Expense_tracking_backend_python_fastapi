@@ -7,7 +7,7 @@ from sqlalchemy.ext.declarative import declarative_base
 SQLALCHEMY_DATABASE_URL = settings.DATABASE_URL
 
 # Create SQLAlchemy engine with echo=True to log SQL queries for debugging
-engine = create_engine(SQLALCHEMY_DATABASE_URL, echo=True)
+engine = create_engine(SQLALCHEMY_DATABASE_URL, echo=False)
 
 # Create the database schema if it does not exist
 with engine.connect() as connection:

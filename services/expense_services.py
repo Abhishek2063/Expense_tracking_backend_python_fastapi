@@ -368,7 +368,6 @@ def get_category_wise_expense_data(db: Session, user_id: int) -> Dict[str, Any]:
         "data": [{"category": r[0], "total": float(r[1])} for r in result],
     }
 
-
 def get_annual_expense_data(db: Session, user_id: int) -> Dict[str, Any]:
     """
     Get annual expense data for the user.
@@ -382,15 +381,23 @@ def get_annual_expense_data(db: Session, user_id: int) -> Dict[str, Any]:
     """
     query = (
         db.query(
-            extract("year", Expense.date).label("year"),
-            func.sum(Expense.amount).label("total"),
+            extract('year', Expense.date).label('year'),
+            func.sum(Expense.amount).label('total'),
         )
         .filter(Expense.user_id == user_id)
-        .group_by(extract("year", Expense.date))
-        .order_by(extract("year", Expense.date))
+        .group_by(extract('year', Expense.date))
+        .order_by(extract('year', Expense.date))
     )
 
+ 
+
     result = query.all()
+
+
+
+    # Fetch a sample of actual expense records for comparison
+    sample_expenses = db.query(Expense).filter(Expense.user_id == user_id).order_by(Expense.date.desc()).limit(5).all()
+
     return {
         "success": True,
         "status_code": status.HTTP_200_OK,
@@ -398,10 +405,7 @@ def get_annual_expense_data(db: Session, user_id: int) -> Dict[str, Any]:
         "data": [{"year": int(r[0]), "total": float(r[1])} for r in result],
     }
 
-
-def get_monthly_expense_data(
-    db: Session, user_id: int, year: int = None
-) -> Dict[str, Any]:
+def get_monthly_expense_data(db: Session, user_id: int, year: int = None) -> Dict[str, Any]:
     """
     Get monthly expense data for the user, optionally for a specific year.
 
@@ -418,18 +422,75 @@ def get_monthly_expense_data(
 
     query = (
         db.query(
-            extract("month", Expense.date).label("month"),
-            func.sum(Expense.amount).label("total"),
+            extract('month', Expense.date).label('month'),
+            func.sum(Expense.amount).label('total'),
         )
-        .filter(Expense.user_id == user_id, extract("year", Expense.date) == year)
-        .group_by(extract("month", Expense.date))
-        .order_by(extract("month", Expense.date))
+        .filter(Expense.user_id == user_id, extract('year', Expense.date) == year)
+        .group_by(extract('month', Expense.date))
+        .order_by(extract('month', Expense.date))
     )
 
+
+
     result = query.all()
+
+
+
+    # Fetch a sample of actual expense records for the specified year
+    sample_expenses = (
+        db.query(Expense)
+        .filter(Expense.user_id == user_id, extract('year', Expense.date) == year)
+        .order_by(Expense.date.desc())
+        .limit(5)
+        .all()
+    )
+
+
     return {
         "success": True,
         "status_code": status.HTTP_200_OK,
         "message": f"Monthly expense data for year {year} retrieved successfully",
         "data": [{"month": int(r[0]), "total": float(r[1])} for r in result],
+    }
+
+def debug_expense_data(db: Session, user_id: int):
+    """
+    Debug function to check raw expense data.
+
+    Args:
+        db (Session): The database session.
+        user_id (int): The ID of the user.
+
+    Returns:
+        Dict[str, Any]: A dictionary containing debug information about the expense data.
+    """
+    # Get the total number of expenses
+    total_expenses = db.query(Expense).filter(Expense.user_id == user_id).count()
+
+    # Get the date range of expenses
+    date_range = db.query(func.min(Expense.date), func.max(Expense.date)).filter(Expense.user_id == user_id).first()
+
+    # Get a sample of expenses
+    sample_expenses = db.query(Expense).filter(Expense.user_id == user_id).order_by(Expense.date.desc()).limit(10).all()
+
+    return {
+        "success": True,
+        "status_code": status.HTTP_200_OK,
+        "message": "Debug information retrieved successfully",
+        "data": {
+            "total_expenses": total_expenses,
+            "date_range": {
+                "min_date": date_range[0].isoformat() if date_range[0] else None,
+                "max_date": date_range[1].isoformat() if date_range[1] else None,
+            },
+            "sample_expenses": [
+                {
+                    "id": e.id,
+                    "date": e.date.isoformat(),
+                    "amount": float(e.amount),
+                    "category_id": e.category_id,
+                }
+                for e in sample_expenses
+            ],
+        },
     }
