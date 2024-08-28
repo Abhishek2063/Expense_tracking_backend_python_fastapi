@@ -4,6 +4,7 @@ from modals.roles_modal import Role
 from modals.modules_modal import Module
 from modals.users_modal import User
 from modals.categories_modal import Category
+from modals.expenses_modal import Expense
 
 # Initialize the CryptContext with bcrypt as the hashing scheme
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -163,6 +164,36 @@ def get_category_by_user_id_and_category_name(
     return (
         db.query(Category)
         .filter(Category.user_id == user_id, Category.name == category_name)
+        .first()
+    )
+
+
+def get_category_by_user_id_and_category_id(
+    db: Session, user_id: int, category_id: int
+):
+    """
+    Retrieves a category associated with a specific user based on the user's ID and the category's name.
+
+    Args:
+        db (Session): The database session used to query the Category table.
+        user_id (int): The ID of the user who owns the category.
+        category_id (int): The id of the category to retrieve.
+
+    Returns:
+        Category: The Category object that matches the user_id and category_id, or None if no match is found.
+    """
+    return (
+        db.query(Category)
+        .filter(Category.user_id == user_id, Category.id == category_id)
+        .first()
+    )
+
+
+def get_expense_by_user_id_and_category_id(db: Session, user_id: int, category_id: int):
+
+    return (
+        db.query(Expense)
+        .filter(Expense.user_id == user_id, Expense.category_id == category_id)
         .first()
     )
 

@@ -34,13 +34,19 @@ USER_ROLES_LIST_GET_SUCCESSFULLY = "User roles list retrieved successfully."
 USER_ROLE_NOT_EXIST = "The specified user role does not exist."
 USER_ROLE_FOUND_SUCCESSFULL = "User role has been located successfully."
 USER_ROLE_UPDATE_SUCCESSFULLY = "User role has been updated successfully."
-USER_ROLE_IS_CONNECTED_WITH_USER_TABLE = "This user role is associated with existing users."
+USER_ROLE_IS_CONNECTED_WITH_USER_TABLE = (
+    "This user role is associated with existing users."
+)
 USER_ROLE_DELETE_SUCCESSFULLY = "User role has been deleted successfully."
 
 CATEGORY_ALREADY_CREATED = "This category has already been created."
 CATEGORY_CREATED_SUCCESSFULY = "Category created successfully."
 CATEGORIES_LIST_GET_SUCCESSFULLY = "Category list retrieved successfully."
 CATEGORIES_NOT_EXIST = "Category does not exist."
+CATEGORY_UPDATED_SUCCESSFULY = "Category updated successfully."
+CATEGORY_DELETED_SUCCESSFULY = "Category deleted successfully."
+CATEGORY_NOT_DELETED = "Category cat not delete because it is linked with expense."
+
 
 
 MODULE_ALREADY_CREATED = "This module has already been created."
