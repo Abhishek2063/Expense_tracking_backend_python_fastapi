@@ -57,3 +57,9 @@ MODULE_LIST_GET_SUCCESSFULLY = "Module list retrieved successfully."
 MODULE_PERMISSION_UPDATED_SUCCESSFULLY = "Module permission updated successfully."
 EXPENSES_CREATED_SUCCESSFULLY = "Expense created successfully."
 EXPENSES_LIST_GET_SUCCESSFULLY = "Expenses list retrieved successfully."
+EXPENSE_NOT_EXIST = "This expense not exist."
+EXPENSES_UPDATED_SUCCESSFULLY = "Expense updated successfully."
+EXPENSES_DELETE_SUCCESSFULLY = "Expense deleted successfully."
+INVALID_TIME_FRAME = "Invalid time frame"
+
+

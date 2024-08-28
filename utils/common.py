@@ -224,3 +224,8 @@ def get_module_by_id(db: Session, module_id: int) -> Role:
         module: The module object if found, None otherwise.
     """
     return db.query(Module).filter(Module.id == module_id).first()
+
+
+def get_expense_by_id(db: Session, expense_id: id) -> Expense:
+   
+    return db.query(Expense).filter(Expense.id == expense_id).first()
