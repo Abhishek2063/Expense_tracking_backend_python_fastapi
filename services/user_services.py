@@ -31,11 +31,12 @@ from utils.message import (
 from modals.users_modal import User
 from modals.roles_modal import Role
 from sqlalchemy import asc, desc
+from modals.categories_modal import Category
 
 
 def create_user_services(db: Session, user_create: User_Create_Schema):
     """
-    Service function to create a new user in the database.
+    Service function to create a new user in the database and add default categories for the user.
 
     Args:
         db (Session): The database session.
@@ -54,7 +55,7 @@ def create_user_services(db: Session, user_create: User_Create_Schema):
         return {
             "success": False,
             "status_code": status.HTTP_400_BAD_REQUEST,
-            "message": USER_EMAIL_ALREADY_REGISTERED,
+            "message": "Email is already registered.",
         }
 
     # Retrieve the role by name "User"
@@ -63,7 +64,7 @@ def create_user_services(db: Session, user_create: User_Create_Schema):
         return {
             "success": False,
             "status_code": status.HTTP_400_BAD_REQUEST,
-            "message": USER_INVALID_ROLE_ID,
+            "message": "Invalid role ID.",
         }
 
     # Hash the user's password
@@ -78,18 +79,56 @@ def create_user_services(db: Session, user_create: User_Create_Schema):
         role_id=db_role.id,
     )
 
-    # Add the user to the session and commit to save in the database
-    db.add(db_user)
-    db.commit()
-    db.refresh(db_user)
+    try:
+        # Add the user to the session and commit to save in the database
+        db.add(db_user)
+        db.commit()
+        db.refresh(db_user)
 
-    # Return a success response with the created user data
-    return {
-        "success": True,
-        "status_code": status.HTTP_201_CREATED,
-        "message": USER_CREATED_SUCCESSFULLY,
-        "data": db_user,
-    }
+        # Define default categories
+        categories = [
+            {
+                "name": "Food",
+                "description": "Expenses related to food",
+                "user_id": db_user.id,
+            },
+            {
+                "name": "Transport",
+                "description": "Expenses related to transport",
+                "user_id": db_user.id,
+            },
+            {
+                "name": "Entertainment",
+                "description": "Expenses related to entertainment",
+                "user_id": db_user.id,
+            },
+        ]
+
+        # Add default categories for the new user
+        for category in categories:
+            db_category = Category(**category)
+            db.add(db_category)
+
+        # Commit the session to save the categories
+        db.commit()
+
+        # Return a success response with the created user data
+        return {
+            "success": True,
+            "status_code": status.HTTP_201_CREATED,
+            "message": "User created successfully.",
+            "data": db_user,
+        }
+
+    except Exception as e:
+        # Rollback in case of error
+        db.rollback()
+        print(f"An error occurred: {e}")
+        return {
+            "success": False,
+            "status_code": status.HTTP_500_INTERNAL_SERVER_ERROR,
+            "message": "An unexpected error occurred while creating the user.",
+        }
 
 
 def get_all_users_services(

@@ -1,49 +1,62 @@
 from sqlalchemy.orm import Session
 from modals.module_permission_modal import ModulePermission
-from utils.common import get_modules, get_roles
-from utils.seed_common import get_or_create, seed_data
 from modals.roles_modal import Role
 from modals.modules_modal import Module
 
+
 def seed_module_permissions(db: Session):
     """
-    Seeds the database with module permissions for different roles.
-
-    - Defines a mapping of roles to modules they should have access to.
-    - Retrieves or creates the necessary role and module records.
-    - Constructs a list of permissions to be seeded into the database.
-    - Uses the `seed_data` function to insert the permissions into the ModulePermission table.
+    Seeds the database with predefined module permissions for each role.
 
     Parameters:
     - db (Session): The SQLAlchemy database session to use for seeding data.
     """
-    # Define a mapping of roles to modules they should have access to
-    role_module_map = {
-        "Super Admin": ["Dashboard"],
-        "Admin": ["Dashboard"],
-        "User": ["Dashboard"],
-    }
+    # Retrieve all roles and modules from the database
+    roles = db.query(Role).all()
+    modules = db.query(Module).all()
 
-    # List to hold permission records to be inserted
-    permissions = []
-    
-    # Iterate through each role and its associated modules
-    for role_name, modules in role_module_map.items():
-        # Retrieve or create the role
-        role = get_or_create(db, Role, name=role_name)[0]
-        
-        # Iterate through each module for the current role
-        for module_name in modules:
-            # Retrieve or create the module
-            module = get_or_create(db, Module, name=module_name)[0]
-            
-            # Append the permission record to the list
-            permissions.append(
-                {
-                    "role_id": role.id,
-                    "module_id": module.id,
-                }
-            )
+    if not roles or not modules:
+        print("Roles or modules are missing, skipping module permissions seeding.")
+        return
 
-    # Seed the permissions into the database
-    seed_data(db, ModulePermission, permissions)
+    # Define the module permissions
+    module_permissions = [
+        # Super Admin has access to all modules
+        {"role_name": "Super Admin", "module_ids": [module.id for module in modules]},
+        # Admin has limited access (e.g., all but Manage Category and Manage Expense)
+        {"role_name": "Admin", "module_ids": [module.id for module in modules]},
+        # User has access to only specific modules
+        {
+            "role_name": "User",
+            "module_ids": [
+                module.id
+                for module in modules
+                if module.link_name
+                not in [["/manage-module", "/manage-user", "/manage-role"]]
+            ],
+        },
+    ]
+
+    # Seed module permissions
+    for permission in module_permissions:
+        role = db.query(Role).filter_by(name=permission["role_name"]).first()
+        if not role:
+            print(f"Role '{permission['role_name']}' not found, skipping permissions.")
+            continue
+
+        for module_id in permission["module_ids"]:
+            # Check if the permission already exists
+            if (
+                db.query(ModulePermission)
+                .filter_by(role_id=role.id, module_id=module_id)
+                .first()
+            ):
+                continue
+
+            # Create a new ModulePermission object
+            new_permission = ModulePermission(role_id=role.id, module_id=module_id)
+            db.add(new_permission)
+
+    # Commit the session to save the module permissions
+    db.commit()
+    print("Module permissions have been seeded successfully.")

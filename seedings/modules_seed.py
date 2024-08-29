@@ -1,21 +1,58 @@
-from modals.modules_modal import Module
 from sqlalchemy.orm import Session
-from utils.seed_common import seed_data
+from modals.modules_modal import Module
+
 
 def seed_modules(db: Session):
     """
     Seeds the database with predefined modules.
 
-    - Defines a list of module dictionaries, each containing a name, description, and link name.
-    - Uses the `seed_data` function to insert the module data into the Module table.
-
     Parameters:
     - db (Session): The SQLAlchemy database session to use for seeding data.
     """
-    # Define a list of modules to be seeded into the database
-    modules = [
-        {"name": "Dashboard", "description": "All reports", "link_name": "dashboard"},
-    ]
-    
-    # Seed the modules into the database using the seed_data function
-    seed_data(db, Module, modules)
+    # Check if the Module table is empty
+    if db.query(Module).count() == 0:
+        # Define a list of modules to be seeded into the database
+        modules = [
+            {
+                "name": "Dashboard",
+                "link_name": "/dashboard",
+                "description": "Main dashboard view with overview metrics.",
+            },
+            {
+                "name": "Manage Module",
+                "link_name": "/manage-module",
+                "description": "Interface for managing application modules.",
+            },
+            {
+                "name": "Manage Role",
+                "link_name": "/manage-role",
+                "description": "Tool for managing user roles and permissions.",
+            },
+            {
+                "name": "Manage User",
+                "link_name": "/manage-user",
+                "description": "Admin interface for managing user accounts.",
+            },
+            {
+                "name": "Manage Category",
+                "link_name": "/manage-category",
+                "description": "Functionality for managing expense categories.",
+            },
+            {
+                "name": "Manage Expense",
+                "link_name": "/manage-expense",
+                "description": "Tool for recording and tracking expenses.",
+            },
+        ]
+
+        # Insert each module into the database
+        for module in modules:
+            new_module = Module(**module)
+            db.add(new_module)
+
+        # Commit the session to save the modules
+        db.commit()
+
+        print("Modules have been seeded successfully.")
+    else:
+        print("Modules already exist, skipping seeding.")

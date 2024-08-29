@@ -15,7 +15,7 @@ class Category(Base):
         Integer, ForeignKey("expanse_tracking_python.users.id", ondelete="CASCADE", onupdate="CASCADE")
     )
     # Name of the category
-    name = Column(String(20), nullable=False, unique=True)
+    name = Column(String(20), nullable=False, unique=False)
 
     # Description of the category
     description = Column(String(255))

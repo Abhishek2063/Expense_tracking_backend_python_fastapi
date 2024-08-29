@@ -1,6 +1,5 @@
 from modals.roles_modal import Role
 from sqlalchemy.orm import Session
-from utils.seed_common import seed_data
 
 def seed_roles(db: Session):
     """
@@ -12,12 +11,20 @@ def seed_roles(db: Session):
     Parameters:
     - db (Session): The SQLAlchemy database session to use for seeding data.
     """
-    # Define a list of roles to be seeded into the database
-    roles = [
-        {"name": "Super Admin", "description": "All access to all features"},
-        {"name": "Admin", "description": "Limited access to all features"},
-        {"name": "User", "description": "User related modules permission."},
-    ]
-    
-    # Seed the roles into the database using the seed_data function
-    seed_data(db, Role, roles)
+    # Check if the Role table is empty
+    if db.query(Role).count() == 0:
+        # Define a list of roles to be seeded into the database
+        roles = [
+            {"name": "Super Admin", "description": "All access to all features"},
+            {"name": "Admin", "description": "Limited access to all features"},
+            {"name": "User", "description": "User-related modules permission."},
+        ]
+
+        # Insert each role into the database
+        for role in roles:
+            new_role = Role(**role)
+            db.add(new_role)
+        
+        print("Roles have been seeded successfully.")
+    else:
+        print("Roles already exist, skipping seeding.")
