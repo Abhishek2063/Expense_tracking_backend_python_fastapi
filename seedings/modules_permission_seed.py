@@ -32,7 +32,7 @@ def seed_module_permissions(db: Session):
                 module.id
                 for module in modules
                 if module.link_name
-                not in [["/manage-module", "/manage-user", "/manage-role"]]
+                not in ["/manage-module", "/manage-user", "/manage-role"]
             ],
         },
     ]
