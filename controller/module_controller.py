@@ -15,7 +15,7 @@ from schemas.module_schema import (
 )
 from config.database import get_db
 from modals.users_modal import User
-from utils.response import create_response
+from utils.response import create_response, raise_error
 from services.module_services import (
     create_module_services,
     get_all_modules_list_services,
@@ -52,7 +52,7 @@ def create_new_module_controller(
     # Verify user authentication
     if not isinstance(user, User):
         # If the user is not authenticated, return an error response
-        return create_response(
+        return raise_error(
             status_code=user["status_code"],
             success=user["success"],
             message=user["message"],
@@ -65,7 +65,7 @@ def create_new_module_controller(
         # Check if the service returned a success response
         if not db_category["success"]:
             # If the service indicated failure, return the error response
-            return create_response(
+            return raise_error(
                 db_category["status_code"],
                 db_category["success"],
                 db_category["message"],
@@ -84,14 +84,14 @@ def create_new_module_controller(
 
     except HTTPException as e:
         # Handle any HTTP-specific exceptions that occur during processing
-        return create_response(
+        return raise_error(
             status_code=e.status_code,
             success=False,
             message=str(e.detail),
         )
     except Exception as e:
         # Handle unexpected server errors and return a generic error response
-        return create_response(
+        return raise_error(
             status_code=500,
             success=False,
             message=INTERNAL_SERVER_ERROR,
@@ -126,7 +126,7 @@ def update_module_controller(
     # Verify user authentication
     if not isinstance(user, User):
         # If the user is not authenticated, return an error response
-        return create_response(
+        return raise_error(
             status_code=user["status_code"],
             success=user["success"],
             message=user["message"],
@@ -139,7 +139,7 @@ def update_module_controller(
         # Check if the service returned a success response
         if not db_module["success"]:
             # If the service indicated failure, return the error response
-            return create_response(
+            return raise_error(
                 db_module["status_code"],
                 db_module["success"],
                 db_module["message"],
@@ -158,14 +158,14 @@ def update_module_controller(
 
     except HTTPException as e:
         # Handle any HTTP-specific exceptions that occur during processing
-        return create_response(
+        return raise_error(
             status_code=e.status_code,
             success=False,
             message=str(e.detail),
         )
     except Exception as e:
         # Handle unexpected server errors and return a generic error response
-        return create_response(
+        return raise_error(
             status_code=500,
             success=False,
             message=INTERNAL_SERVER_ERROR,
@@ -193,7 +193,7 @@ def get_all_module_list_controller(
     # Verify user authentication
     if not isinstance(user, User):
         # If the user is not authenticated, return an error response with user details
-        return create_response(
+        return raise_error(
             status_code=user["status_code"],
             success=user["success"],
             message=user["message"],
@@ -206,7 +206,7 @@ def get_all_module_list_controller(
         # Check if the service returned a success response
         if not db_module["success"]:
             # If the service indicates failure, return the error response
-            return create_response(
+            return raise_error(
                 db_module["status_code"],
                 db_module["success"],
                 db_module["message"],
@@ -222,14 +222,14 @@ def get_all_module_list_controller(
 
     except HTTPException as e:
         # Handle any HTTP-specific exceptions that occur during processing
-        return create_response(
+        return raise_error(
             status_code=e.status_code,
             success=False,
             message=str(e.detail),
         )
     except Exception as e:
         # Handle unexpected server errors and return a generic error response
-        return create_response(
+        return raise_error(
             status_code=500,
             success=False,
             message=INTERNAL_SERVER_ERROR,
@@ -262,7 +262,7 @@ def update_module_permission_controller(
     # Verify user authentication
     if not isinstance(user, User):
         # If the user is not authenticated, return an error response with user details
-        return create_response(
+        return raise_error(
             status_code=user["status_code"],
             success=user["success"],
             message=user["message"],
@@ -275,7 +275,7 @@ def update_module_permission_controller(
         # Check if the service returned a success response
         if not db_module["success"]:
             # If the service indicates failure, return the error response
-            return create_response(
+            return raise_error(
                 status_code=db_module["status_code"],
                 success=db_module["success"],
                 message=db_module["message"],
@@ -291,14 +291,14 @@ def update_module_permission_controller(
 
     except HTTPException as e:
         # Handle any HTTP-specific exceptions that occur during processing
-        return create_response(
+        return raise_error(
             status_code=e.status_code,
             success=False,
             message=str(e.detail),
         )
     except Exception as e:
         # Handle unexpected server errors and return a generic error response
-        return create_response(
+        return raise_error(
             status_code=500,
             success=False,
             message=INTERNAL_SERVER_ERROR,

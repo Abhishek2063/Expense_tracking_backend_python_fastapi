@@ -22,3 +22,22 @@ def create_response(
         "message": message,          # A descriptive message about the response
         "data": data,                # Optional data payload (could be None if not applicable)
     }
+def raise_error(status_code: int, message: str, data: Any = None,success : bool = False) -> None:
+    """
+    Raise an HTTPException with a standardized error response structure.
+
+    Args:
+        status_code (int): The HTTP status code for the error response (e.g., 400, 404, 500).
+        message (str): A message providing additional context or information about the error.
+        data (Any, optional): Optional data related to the error (e.g., validation errors). Defaults to None.
+
+    Raises:
+        HTTPException: An exception that FastAPI will catch and convert into an HTTP response.
+    """
+    error_response = {
+        "status_code": status_code,  # The HTTP status code indicating the type of error
+        "success": success,            # Boolean indicating the failure of the operation
+        "message": message,          # A descriptive message about the error
+        "data": data,                # Optional data payload with additional error details
+    }
+    raise HTTPException(status_code=status_code, detail=error_response)

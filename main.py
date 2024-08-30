@@ -15,6 +15,8 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from middlewares.custom_exception_handler import custom_http_exception_handler
 from config.config import settings
+# from fakerData.expenseFackerData import insert_random_expenses
+# from fakerData.categoryFackerData import insert_random_categories
 
 # Seed initial data into the database (if applicable)
 seed_data()
@@ -85,7 +87,14 @@ app.include_router(module_router)
 # Include expense-related routes from the `expense_routes` module
 app.include_router(expense_router)
 
+# # Example usage
+# insert_random_categories(user_id=4, count=20)
+# Usage
+# user_id = 4  # Replace with the actual user ID
+# year = 2024  # Replace with the desired year
+# num_expenses_per_month = 30  # Adjust as needed
 
+# insert_random_expenses(user_id, year, num_expenses_per_month)
 # Define a root endpoint that returns a welcome message
 @app.get("/")
 def read_root():

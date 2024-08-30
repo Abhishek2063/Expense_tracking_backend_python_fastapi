@@ -267,7 +267,7 @@ def get_time_based_expense_data(
     db: Session, user_id: int, time_frame: str = "date"
 ) -> Dict[str, Any]:
     """
-    Get expense data based on the specified time frame (date, month, or year).
+    Get expense data based on the specified time frame (date, month, or year) in chronological order.
 
     Args:
         db (Session): The database session.
@@ -275,7 +275,7 @@ def get_time_based_expense_data(
         time_frame (str): The time frame for data aggregation ('date', 'month', or 'year').
 
     Returns:
-        Dict[str, Any]: A dictionary containing the aggregated expense data.
+        Dict[str, Any]: A dictionary containing the aggregated expense data in chronological order.
     """
     current_date = datetime.now()
 
@@ -292,6 +292,7 @@ def get_time_based_expense_data(
                 Expense.user_id == user_id, Expense.date.between(start_date, end_date)
             )
             .group_by(func.date(Expense.date))
+            .order_by(func.date(Expense.date))  # Order by date
         )
 
     elif time_frame == "month":
@@ -307,6 +308,7 @@ def get_time_based_expense_data(
                 Expense.user_id == user_id, Expense.date.between(start_date, end_date)
             )
             .group_by(extract("month", Expense.date))
+            .order_by(extract("month", Expense.date))  # Order by month
         )
 
     elif time_frame == "year":
@@ -322,19 +324,21 @@ def get_time_based_expense_data(
                 Expense.user_id == user_id, Expense.date.between(start_date, end_date)
             )
             .group_by(extract("year", Expense.date))
+            .order_by(extract("year", Expense.date))  # Order by year
         )
 
     else:
         return {
             "status_code": status.HTTP_400_BAD_REQUEST,
             "success": False,
-            "message": INVALID_TIME_FRAME,
+            "message": "Invalid time frame specified.",
         }
+
     result = query.all()
 
     return {
         "success": True,
-        "status_code": status.HTTP_200_OK,  # Use 200 OK for successful deletion
+        "status_code": status.HTTP_200_OK,
         "message": f"Expense data retrieved successfully for {time_frame}",
         "data": [{"period": r[0], "total": float(r[1])} for r in result],
     }

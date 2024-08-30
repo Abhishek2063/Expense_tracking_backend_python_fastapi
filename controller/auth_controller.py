@@ -5,7 +5,7 @@ from schemas.response_schema import API_Response
 from schemas.auth_schema import UserLogin, UserLoginResponse
 from config.database import get_db
 from services.auth_services import auth_user_services
-from utils.response import create_response
+from utils.response import create_response, raise_error
 from utils.message import INTERNAL_SERVER_ERROR, LOGIN_SUCCESSFUL
 
 # Initialize the APIRouter
@@ -34,7 +34,7 @@ def login(
         
         # Check if the authentication was successful
         if not login_response["success"]:
-            return create_response(
+            return raise_error(
                 login_response["status_code"],
                 login_response["success"],
                 login_response["message"],
@@ -53,7 +53,7 @@ def login(
     
     except HTTPException as e:
         # Handle HTTP exceptions that may occur during execution
-        return create_response(
+        return raise_error(
             status_code=e.status_code,
             success=False,
             message=str(e.detail),
@@ -61,7 +61,7 @@ def login(
     
     except Exception as e:
         # Handle unexpected errors with a generic server error message
-        return create_response(
+        return raise_error(
             status_code=500,
             success=False,
             message=INTERNAL_SERVER_ERROR,

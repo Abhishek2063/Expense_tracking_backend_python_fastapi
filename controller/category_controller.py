@@ -10,7 +10,7 @@ from schemas.category_schema import (
 )
 from config.database import get_db
 from modals.users_modal import User
-from utils.response import create_response
+from utils.response import create_response, raise_error
 from services.category_services import (
     create_category_services,
     delete_category_services,
@@ -44,7 +44,7 @@ def create_new_category_controller(
 
     # Verify user authentication
     if not isinstance(user, User):
-        return create_response(
+        return raise_error(
             status_code=user["status_code"],
             success=user["success"],
             message=user["message"],
@@ -56,7 +56,7 @@ def create_new_category_controller(
 
         # Check if the category creation was successful
         if not db_category["success"]:
-            return create_response(
+            return raise_error(
                 db_category["status_code"],
                 db_category["success"],
                 db_category["message"],
@@ -73,14 +73,14 @@ def create_new_category_controller(
 
     except HTTPException as e:
         # Handle any HTTP-specific exceptions
-        return create_response(
+        return raise_error(
             status_code=e.status_code,
             success=False,
             message=str(e.detail),
         )
     except Exception as e:
         # Handle unexpected server errors
-        return create_response(
+        return raise_error(
             status_code=500,
             success=False,
             message=INTERNAL_SERVER_ERROR,
@@ -115,7 +115,7 @@ def get_all_category_controller(
 
     # Verify user authentication
     if not isinstance(user, User):
-        return create_response(
+        return raise_error(
             status_code=user["status_code"],
             success=user["success"],
             message=user["message"],
@@ -140,7 +140,7 @@ def get_all_category_controller(
         )
     except Exception as e:
         # Handle unexpected server errors
-        return create_response(
+        return raise_error(
             status_code=500,
             success=False,
             message=INTERNAL_SERVER_ERROR,
@@ -173,7 +173,7 @@ def update_category_controller(
     # Verify user authentication and authorization
     if not isinstance(user, User):
         # Return an error response if the user authentication failed
-        return create_response(
+        return raise_error(
             status_code=user["status_code"],
             success=user["success"],
             message=user["message"],
@@ -186,7 +186,7 @@ def update_category_controller(
         # Check if the category update was successful
         if not result["success"]:
             # Return an error response if the update failed
-            return create_response(
+            return raise_error(
                 status_code=result["status_code"],
                 success=result["success"],
                 message=result["message"],
@@ -206,7 +206,7 @@ def update_category_controller(
     except Exception as e:
         # Log the exception (optional) and handle any unexpected server errors
         # logger.error(f"Failed to update category: {str(e)}")
-        return create_response(
+        return raise_error(
             status_code=500,
             success=False,
             message=INTERNAL_SERVER_ERROR,
@@ -238,7 +238,7 @@ def delete_category_controller(
     # Verify user authentication and authorization
     if not isinstance(user, User):
         # Return an error response if the user authentication failed
-        return create_response(
+        return raise_error(
             status_code=user["status_code"],
             success=user["success"],
             message=user["message"],
@@ -251,7 +251,7 @@ def delete_category_controller(
         # Check if the category deletion was successful
         if not result["success"]:
             # Return an error response if the deletion failed
-            return create_response(
+            return raise_error(
                 status_code=result["status_code"],
                 success=result["success"],
                 message=result["message"],
@@ -267,7 +267,7 @@ def delete_category_controller(
     except Exception as e:
         # Log the exception (optional) and handle any unexpected server errors
         # logger.error(f"Failed to delete category: {str(e)}")
-        return create_response(
+        return raise_error(
             status_code=500,
             success=False,
             message=INTERNAL_SERVER_ERROR,

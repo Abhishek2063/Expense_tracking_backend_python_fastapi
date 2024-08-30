@@ -24,7 +24,7 @@ from services.user_services import (
     update_user_password_services,
     update_user_services,
 )
-from utils.response import create_response
+from utils.response import create_response, raise_error
 from utils.message import USER_CREATION_FAILED
 from modals.users_modal import User
 from middlewares.auth_middleware import authenticate_user
@@ -56,7 +56,7 @@ def create_user_controller(
 
         # Check if user creation was successful
         if not db_user["success"]:
-            return create_response(
+            return raise_error(
                 db_user["status_code"],
                 db_user["success"],
                 db_user["message"],
@@ -75,7 +75,7 @@ def create_user_controller(
 
     except HTTPException as e:
         # Handle HTTP exceptions that may be raised during execution
-        return create_response(
+        return raise_error(
             status_code=e.status_code,
             success=False,
             message=str(e.detail),
@@ -83,7 +83,7 @@ def create_user_controller(
 
     except Exception as e:
         # Handle unexpected errors
-        return create_response(
+        return raise_error(
             status_code=500,
             success=False,
             message=USER_CREATION_FAILED,
@@ -122,7 +122,7 @@ def get_all_users_controller(
 
     # Check if the authentication failed (i.e., user is a dict with an error response)
     if not isinstance(user, User):
-        return create_response(
+        return raise_error(
             status_code=user["status_code"],
             success=user["success"],
             message=user["message"],
@@ -142,7 +142,7 @@ def get_all_users_controller(
         )
     except Exception as e:
         # Handle unexpected errors and return a generic error response
-        return create_response(
+        return raise_error(
             status_code=500,
             success=False,
             message=USER_CREATION_FAILED,  # Consider renaming this to a more appropriate message
@@ -172,7 +172,7 @@ def get_user_by_id_controller(
 
     # Check if the authentication failed (i.e., user is a dict with an error response)
     if not isinstance(user, User):
-        return create_response(
+        return raise_error(
             status_code=user["status_code"],
             success=user["success"],
             message=user["message"],
@@ -183,7 +183,7 @@ def get_user_by_id_controller(
         result = get_user_by_id_services(db, user_id)
         if not result["success"]:
             # Handle the case where the user is not found or another error occurs
-            return create_response(
+            return raise_error(
                 result["status_code"],
                 result["success"],
                 result["message"],
@@ -199,11 +199,12 @@ def get_user_by_id_controller(
         )
     except Exception as e:
         # Handle unexpected errors and return a generic error response
-        return create_response(
+        return raise_error(
             status_code=500,
             success=False,
             message=USER_CREATION_FAILED,  # Consider renaming this to a more appropriate message
         )
+
 
 @router.put(f"{UPDATE_USER_DETAILS}" + "{user_id}", response_model=API_Response)
 def update_user_details_controller(
@@ -225,7 +226,7 @@ def update_user_details_controller(
     - API response with the status of the update operation.
     """
     if not isinstance(user, User):  # Check if the authenticated user is valid
-        return create_response(
+        return raise_error(
             status_code=user["status_code"],
             success=user["success"],
             message=user["message"],
@@ -234,7 +235,7 @@ def update_user_details_controller(
     try:
         result = update_user_services(db, user_id, user_update)
         if not result["success"]:
-            return create_response(
+            return raise_error(
                 result["status_code"],
                 result["success"],
                 result["message"],
@@ -251,7 +252,7 @@ def update_user_details_controller(
         )
     except Exception as e:
         # Log the exception (consider adding a logger)
-        return create_response(
+        return raise_error(
             status_code=500,
             success=False,
             message=USER_CREATION_FAILED,
@@ -280,7 +281,7 @@ def update_user_password_details_controller(
     - API response with the status of the password update operation.
     """
     if not isinstance(user, User):  # Check if the authenticated user is valid
-        return create_response(
+        return raise_error(
             status_code=user["status_code"],
             success=user["success"],
             message=user["message"],
@@ -289,7 +290,7 @@ def update_user_password_details_controller(
     try:
         result = update_user_password_services(db, user_id, user_update_password)
         if not result["success"]:
-            return create_response(
+            return raise_error(
                 result["status_code"],
                 result["success"],
                 result["message"],
@@ -306,7 +307,7 @@ def update_user_password_details_controller(
         )
     except Exception as e:
         # Log the exception (consider adding a logger)
-        return create_response(
+        return raise_error(
             status_code=500,
             success=False,
             message=USER_CREATION_FAILED,
@@ -331,7 +332,7 @@ def delete_user_by_id_controller(
     - API response with the status of the deletion operation.
     """
     if not isinstance(user, User):  # Check if the authenticated user is valid
-        return create_response(
+        return raise_error(
             status_code=user["status_code"],
             success=user["success"],
             message=user["message"],
@@ -346,7 +347,7 @@ def delete_user_by_id_controller(
         )
     except Exception as e:
         # Log the exception (consider adding a logger)
-        return create_response(
+        return raise_error(
             status_code=500,
             success=False,
             message=USER_CREATION_FAILED,

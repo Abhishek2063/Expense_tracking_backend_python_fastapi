@@ -6,7 +6,7 @@ from schemas.response_schema import API_Response
 from schemas.expense_schema import ExpenseCreateSchema, ExpenseUpdateSchema
 from config.database import get_db
 from modals.users_modal import User
-from utils.response import create_response
+from utils.response import create_response, raise_error
 from services.expense_services import (
     create_expenses_services,
     delete_expense,
@@ -50,7 +50,7 @@ def create_new_expense_controller(
     # Verify user authentication
     if not isinstance(user, User):
         # If the user is not authenticated, return an error response with user details
-        return create_response(
+        return raise_error(
             status_code=user["status_code"],
             success=user["success"],
             message=user["message"],
@@ -63,7 +63,7 @@ def create_new_expense_controller(
         # Check if the expense creation was successful
         if not db_expense["success"]:
             # If not successful, return the error response from the service
-            return create_response(
+            return raise_error(
                 db_expense["status_code"],
                 db_expense["success"],
                 db_expense["message"],
@@ -79,14 +79,14 @@ def create_new_expense_controller(
 
     except HTTPException as e:
         # Handle any HTTP-specific exceptions
-        return create_response(
+        return raise_error(
             status_code=e.status_code,
             success=False,
             message=str(e.detail),
         )
     except Exception as e:
         # Handle unexpected server errors and return a generic error response
-        return create_response(
+        return raise_error(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             success=False,
             message=INTERNAL_SERVER_ERROR,
@@ -123,7 +123,7 @@ def get_all_expense_controller(
     # Verify user authentication
     if not isinstance(user, User):
         # If the user is not authenticated, return an error response with the authentication failure details
-        return create_response(
+        return raise_error(
             status_code=user["status_code"],
             success=user["success"],
             message=user["message"],
@@ -138,7 +138,7 @@ def get_all_expense_controller(
         # Check if the expense retrieval was successful
         if not db_expense["success"]:
             # If not successful, return the error response from the service layer
-            return create_response(
+            return raise_error(
                 db_expense["status_code"],
                 db_expense["success"],
                 db_expense["message"],
@@ -154,14 +154,14 @@ def get_all_expense_controller(
 
     except HTTPException as e:
         # Handle any HTTP-specific exceptions and return the corresponding error response
-        return create_response(
+        return raise_error(
             status_code=e.status_code,
             success=False,
             message=str(e.detail),
         )
     except Exception as e:
         # Handle unexpected server errors and return a generic error response
-        return create_response(
+        return raise_error(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             success=False,
             message=INTERNAL_SERVER_ERROR,
@@ -189,7 +189,7 @@ def update_expense_controller(
     """
     # Verify user authentication
     if not isinstance(user, User):
-        return create_response(
+        return raise_error(
             status_code=user["status_code"],
             success=user["success"],
             message=user["message"],
@@ -201,7 +201,7 @@ def update_expense_controller(
 
         # Check if the update operation was successful
         if not db_expense["success"]:
-            return create_response(
+            return raise_error(
                 status_code=db_expense["status_code"],
                 success=db_expense["success"],
                 message=db_expense["message"],
@@ -217,14 +217,14 @@ def update_expense_controller(
 
     except HTTPException as e:
         # Handle HTTP-specific exceptions
-        return create_response(
+        return raise_error(
             status_code=e.status_code,
             success=False,
             message=str(e.detail),
         )
     except Exception as e:
         # Handle unexpected server errors and return a generic error response
-        return create_response(
+        return raise_error(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             success=False,
             message=INTERNAL_SERVER_ERROR,
@@ -250,7 +250,7 @@ def delete_expense_controller(
     """
     # Verify user authentication
     if not isinstance(user, User):
-        return create_response(
+        return raise_error(
             status_code=user["status_code"],
             success=user["success"],
             message=user["message"],
@@ -262,7 +262,7 @@ def delete_expense_controller(
 
         # Check if the deletion operation was successful
         if not db_expense["success"]:
-            return create_response(
+            return raise_error(
                 status_code=db_expense["status_code"],
                 success=db_expense["success"],
                 message=db_expense["message"],
@@ -277,14 +277,14 @@ def delete_expense_controller(
 
     except HTTPException as e:
         # Handle HTTP-specific exceptions
-        return create_response(
+        return raise_error(
             status_code=e.status_code,
             success=False,
             message=str(e.detail),
         )
     except Exception as e:
         # Handle unexpected server errors and return a generic error response
-        return create_response(
+        return raise_error(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             success=False,
             message=INTERNAL_SERVER_ERROR,
@@ -305,7 +305,7 @@ def get_time_based_chart_data(
     # Verify user authentication
     if not isinstance(user, User):
         # If the user is not authenticated, return an error response with the authentication failure details
-        return create_response(
+        return raise_error(
             status_code=user["status_code"],
             success=user["success"],
             message=user["message"],
@@ -318,7 +318,7 @@ def get_time_based_chart_data(
         # Check if the expense retrieval was successful
         if not db_expense["success"]:
             # If not successful, return the error response from the service layer
-            return create_response(
+            return raise_error(
                 db_expense["status_code"],
                 db_expense["success"],
                 db_expense["message"],
@@ -334,14 +334,14 @@ def get_time_based_chart_data(
 
     except HTTPException as e:
         # Handle any HTTP-specific exceptions and return the corresponding error response
-        return create_response(
+        return raise_error(
             status_code=e.status_code,
             success=False,
             message=str(e.detail),
         )
     except Exception as e:
         # Handle unexpected server errors and return a generic error response
-        return create_response(
+        return raise_error(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             success=False,
             message=INTERNAL_SERVER_ERROR,
@@ -361,7 +361,7 @@ def get_category_wise_chart_data(
     # Verify user authentication
     if not isinstance(user, User):
         # If the user is not authenticated, return an error response with the authentication failure details
-        return create_response(
+        return raise_error(
             status_code=user["status_code"],
             success=user["success"],
             message=user["message"],
@@ -374,7 +374,7 @@ def get_category_wise_chart_data(
         # Check if the expense retrieval was successful
         if not db_expense["success"]:
             # If not successful, return the error response from the service layer
-            return create_response(
+            return raise_error(
                 db_expense["status_code"],
                 db_expense["success"],
                 db_expense["message"],
@@ -390,14 +390,14 @@ def get_category_wise_chart_data(
 
     except HTTPException as e:
         # Handle any HTTP-specific exceptions and return the corresponding error response
-        return create_response(
+        return raise_error(
             status_code=e.status_code,
             success=False,
             message=str(e.detail),
         )
     except Exception as e:
         # Handle unexpected server errors and return a generic error response
-        return create_response(
+        return raise_error(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             success=False,
             message=INTERNAL_SERVER_ERROR,
@@ -416,7 +416,7 @@ def get_annual_chart_data(
     # Verify user authentication
     if not isinstance(user, User):
         # If the user is not authenticated, return an error response with the authentication failure details
-        return create_response(
+        return raise_error(
             status_code=user["status_code"],
             success=user["success"],
             message=user["message"],
@@ -429,7 +429,7 @@ def get_annual_chart_data(
         # Check if the expense retrieval was successful
         if not db_expense["success"]:
             # If not successful, return the error response from the service layer
-            return create_response(
+            return raise_error(
                 db_expense["status_code"],
                 db_expense["success"],
                 db_expense["message"],
@@ -445,14 +445,14 @@ def get_annual_chart_data(
 
     except HTTPException as e:
         # Handle any HTTP-specific exceptions and return the corresponding error response
-        return create_response(
+        return raise_error(
             status_code=e.status_code,
             success=False,
             message=str(e.detail),
         )
     except Exception as e:
         # Handle unexpected server errors and return a generic error response
-        return create_response(
+        return raise_error(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             success=False,
             message=INTERNAL_SERVER_ERROR,
@@ -472,7 +472,7 @@ def get_monthly_chart_data(
     # Verify user authentication
     if not isinstance(user, User):
         # If the user is not authenticated, return an error response with the authentication failure details
-        return create_response(
+        return raise_error(
             status_code=user["status_code"],
             success=user["success"],
             message=user["message"],
@@ -485,7 +485,7 @@ def get_monthly_chart_data(
         # Check if the expense retrieval was successful
         if not db_expense["success"]:
             # If not successful, return the error response from the service layer
-            return create_response(
+            return raise_error(
                 db_expense["status_code"],
                 db_expense["success"],
                 db_expense["message"],
@@ -501,14 +501,14 @@ def get_monthly_chart_data(
 
     except HTTPException as e:
         # Handle any HTTP-specific exceptions and return the corresponding error response
-        return create_response(
+        return raise_error(
             status_code=e.status_code,
             success=False,
             message=str(e.detail),
         )
     except Exception as e:
         # Handle unexpected server errors and return a generic error response
-        return create_response(
+        return raise_error(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             success=False,
             message=INTERNAL_SERVER_ERROR,

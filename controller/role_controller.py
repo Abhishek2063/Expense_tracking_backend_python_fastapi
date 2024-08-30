@@ -12,7 +12,7 @@ from schemas.response_schema import API_Response
 from schemas.role_schema import UserRoleCreate, UserRoleResponse, UserRoleUpdate
 from config.database import get_db
 from modals.users_modal import User
-from utils.response import create_response
+from utils.response import create_response, raise_error
 from services.role_services import (
     create_role_services,
     delete_user_role_by_id_services,
@@ -34,7 +34,7 @@ def create_new_role_controller(
 ):
     # Verify user authentication
     if not isinstance(user, User):
-        return create_response(
+        return raise_error(
             status_code=user["status_code"],
             success=user["success"],
             message=user["message"],
@@ -44,7 +44,7 @@ def create_new_role_controller(
         # Call service function to create a new role
         db_user_role = create_role_services(db, role)
         if not db_user_role["success"]:
-            return create_response(
+            return raise_error(
                 db_user_role["status_code"],
                 db_user_role["success"],
                 db_user_role["message"],
@@ -61,14 +61,14 @@ def create_new_role_controller(
 
     except HTTPException as e:
         # Handle HTTP exceptions
-        return create_response(
+        return raise_error(
             status_code=e.status_code,
             success=False,
             message=str(e.detail),
         )
     except Exception as e:
         # Handle unexpected server errors
-        return create_response(
+        return raise_error(
             status_code=500,
             success=False,
             message=INTERNAL_SERVER_ERROR,
@@ -87,7 +87,7 @@ def list_user_roles_controller(
 ):
     # Verify user authentication
     if not isinstance(user, User):
-        return create_response(
+        return raise_error(
             status_code=user["status_code"],
             success=user["success"],
             message=user["message"],
@@ -106,7 +106,7 @@ def list_user_roles_controller(
         )
     except Exception as e:
         # Handle unexpected server errors
-        return create_response(
+        return raise_error(
             status_code=500,
             success=False,
             message=INTERNAL_SERVER_ERROR,
@@ -122,7 +122,7 @@ def get_user_role_controller_by_id(
 ):
     # Verify user authentication
     if not isinstance(user, User):
-        return create_response(
+        return raise_error(
             status_code=user["status_code"],
             success=user["success"],
             message=user["message"],
@@ -132,7 +132,7 @@ def get_user_role_controller_by_id(
         # Call service function to retrieve role details by ID
         result = get_role_details_by_id_services(db, role_id)
         if not result["success"]:
-            return create_response(
+            return raise_error(
                 result["status_code"],
                 result["success"],
                 result["message"],
@@ -148,7 +148,7 @@ def get_user_role_controller_by_id(
         )
     except Exception as e:
         # Handle unexpected server errors
-        return create_response(
+        return raise_error(
             status_code=500,
             success=False,
             message=INTERNAL_SERVER_ERROR,
@@ -165,7 +165,7 @@ def update_user_role_details(
 ):
     # Verify user authentication
     if not isinstance(user, User):
-        return create_response(
+        return raise_error(
             status_code=user["status_code"],
             success=user["success"],
             message=user["message"],
@@ -175,7 +175,7 @@ def update_user_role_details(
         # Call service function to update role details
         result = role_details_update_services(db, role_id, user_role_update=role_update)
         if not result["success"]:
-            return create_response(
+            return raise_error(
                 result["status_code"],
                 result["success"],
                 result["message"],
@@ -191,7 +191,7 @@ def update_user_role_details(
         )
     except Exception as e:
         # Handle unexpected server errors
-        return create_response(
+        return raise_error(
             status_code=500,
             success=False,
             message=INTERNAL_SERVER_ERROR,
@@ -207,7 +207,7 @@ def delete_user_role_by_id_controller(
 ):
     # Verify user authentication
     if not isinstance(user, User):
-        return create_response(
+        return raise_error(
             status_code=user["status_code"],
             success=user["success"],
             message=user["message"],
@@ -223,7 +223,7 @@ def delete_user_role_by_id_controller(
         )
     except Exception as e:
         # Handle unexpected server errors
-        return create_response(
+        return raise_error(
             status_code=500,
             success=False,
             message=INTERNAL_SERVER_ERROR,
