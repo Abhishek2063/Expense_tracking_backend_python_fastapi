@@ -5,12 +5,13 @@ from datetime import datetime, timedelta
 import random
 from modals.categories_modal import Category
 from modals.expenses_modal import Expense
+from config.config import settings
 
 # Create a Faker instance
 fake = Faker()
 
 # Create a database engine and session
-DATABASE_URL = "postgresql://postgres:root@localhost:5432/expanse_tracker"
+DATABASE_URL = settings.DATABASE_URL
 engine = create_engine(DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
